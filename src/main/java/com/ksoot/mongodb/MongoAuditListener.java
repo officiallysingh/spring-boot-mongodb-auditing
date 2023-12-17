@@ -143,6 +143,9 @@ public class MongoAuditListener implements InitializingBean {
           System.out.println(entity.isAnnotationPresent(Document.class));
           boolean boo = entity.isAnnotationPresent(com.ksoot.mongodb.Auditable.class);
           boo = entity.getTypeInformation().getType().isAnnotationPresent(com.ksoot.mongodb.Auditable.class);
+
+          Auditable auditable =
+                  AnnotationUtils.findAnnotation(entity.getType(), Auditable.class);
           return boo;
         })
         .forEach(

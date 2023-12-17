@@ -24,7 +24,7 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 //@AllArgsConstructor(staticName = "of")
-@com.ksoot.mongodb.Auditable
+@Auditable
 @Document(collection = "products")
 @TypeAlias("product")
 public class Product extends AbstractCollection {

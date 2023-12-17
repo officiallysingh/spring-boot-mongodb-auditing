@@ -2,6 +2,7 @@ package com.ksoot.mongodb;
 
 import com.ksoot.common.CommonConstants;
 import com.ksoot.common.DateTimeUtils;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -20,6 +21,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Valid
 @Immutable
 public class AuditEvent implements Identifiable<String> {
 
