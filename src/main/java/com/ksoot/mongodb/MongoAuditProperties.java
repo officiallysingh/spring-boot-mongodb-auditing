@@ -22,19 +22,19 @@ import java.util.List;
 @Valid
 public class MongoAuditProperties {
 
-  private List<String> entityBasePackages = List.of("com.ksoot.product");
+    private List<String> entityBasePackages = List.of("com.ksoot");
 
-  private Auditing auditing = new Auditing();
+    private Auditing auditing = new Auditing();
 
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @ToString
-  @Valid
-  class Auditing {
-    private boolean enabled = false;
-    private boolean withoutTransaction = false;
-    private String prefix = "";
-    private String suffix = "_aud";
-  }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    @Valid
+    class Auditing {
+        private boolean enabled = false;
+        private boolean withoutTransaction = false;
+        private String prefix = "";
+        private String suffix = "_aud";
+    }
 }

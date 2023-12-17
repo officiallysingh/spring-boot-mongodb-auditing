@@ -1,6 +1,5 @@
 package com.ksoot.mongodb;
 
-import com.ksoot.product.domain.model.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,6 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,155 +31,148 @@ import static org.springframework.data.mongodb.core.query.SerializationUtils.ser
 @ConditionalOnProperty(prefix = "application.mongodb.auditing", name = "enabled", havingValue = "true")
 @Slf4j
 @RequiredArgsConstructor
-public class MongoAuditListener implements InitializingBean {
+class MongoAuditListener implements InitializingBean {
 
-  public static Map<String, String> AUDIT_META_DATA = new ConcurrentReferenceHashMap<>();
+    private static final Query EMPTY_QUERY = new Query();
+    public static Map<String, String> AUDIT_META_DATA = new ConcurrentReferenceHashMap<>();
+    private final MongoAuditProperties mongoAuditProperties;
 
-  private static final Query EMPTY_QUERY = new Query();
+    private final MongoOperations mongoOperations;
 
-  private final MongoAuditProperties mongoAuditProperties;
-
-  private final MongoOperations mongoOperations;
-
-  @EventListener(
-      condition =
-          "T(com.ksoot.mongodb.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
-  public void onAfterSave(final AfterSaveEvent<Versionable<Long>> event) {
-    if (log.isDebugEnabled()) {
-      log.debug(
-          String.format(
-              "onAfterSave: %s, %s",
-              event.getSource(), serializeToJsonSafely(event.getDocument())));
-    }
-    final AuditEvent auditEvent = this.createAuditEntryOnAfterSave(event, 0);
-  }
-
-  private AuditEvent createAuditEntryOnAfterSave(
-      final AfterSaveEvent<Versionable<Long>> event, final int attempt) {
-    if (this.validateTransaction()) {
-      String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
-      try {
-        long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-        final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision);
-        return this.mongoOperations.insert(auditEvent, auditCollectionName);
-      } catch (final DuplicateKeyException exception) {
-        if (attempt > 2) { // Max three attempts
-          throw new IllegalStateException(
-              "Non recoverable Race condition in MongoDB Auditing, "
-                  + "while getting next revision number for collection: '"
-                  + auditCollectionName
-                  + "'");
+    @EventListener(
+            condition =
+                    "T(com.ksoot.hammer.config.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
+    public void onAfterSave(final AfterSaveEvent<Versionable<Long>> event) {
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    String.format(
+                            "onAfterSave: %s, %s",
+                            event.getSource(), serializeToJsonSafely(event.getDocument())));
         }
-        return createAuditEntryOnAfterSave(event, attempt + 1);
-      }
-    } else {
-      throw new IllegalStateException(
-          "No active transaction while MongoDB Auditing. Try updating collection: '"
-              + event.getCollectionName()
-              + "' in a Transaction");
+        final AuditEvent auditEvent = this.createAuditEntryOnAfterSave(event, 0);
     }
-  }
 
-  @EventListener(
-      condition =
-          "T(com.ksoot.mongodb.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
-  public void onAfterDelete(final AfterDeleteEvent<Versionable<Long>> event) {
-    if (log.isDebugEnabled()) {
-      log.debug(
-          String.format(
-              "onAfterDelete: %s, %s",
-              event.getSource(), serializeToJsonSafely(event.getDocument())));
-    }
-    final AuditEvent auditEvent = this.createAuditEntryOnAfterDelete(event, 0);
-  }
-
-  private AuditEvent createAuditEntryOnAfterDelete(
-      final AfterDeleteEvent<Versionable<Long>> event, final int attempt) {
-    if (this.validateTransaction()) {
-      String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
-      try {
-        long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-        final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision);
-        return this.mongoOperations.insert(auditEvent, auditCollectionName);
-      } catch (final DuplicateKeyException exception) {
-        if (attempt > 2) { // Max three attempts
-          throw new IllegalStateException(
-              "Non recoverable Race condition in MongoDB Auditing, "
-                  + "while getting next revision number for collection: '"
-                  + auditCollectionName
-                  + "'");
+    private AuditEvent createAuditEntryOnAfterSave(
+            final AfterSaveEvent<Versionable<Long>> event, final int attempt) {
+        if (this.validateTransaction()) {
+            String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
+            try {
+                long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
+                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision);
+                return this.mongoOperations.insert(auditEvent, auditCollectionName);
+            } catch (final DuplicateKeyException exception) {
+                if (attempt > 2) { // Max three attempts
+                    throw new IllegalStateException(
+                            "Non recoverable Race condition in MongoDB Auditing, "
+                                    + "while getting next revision number for collection: '"
+                                    + auditCollectionName
+                                    + "'");
+                }
+                return createAuditEntryOnAfterSave(event, attempt + 1);
+            }
+        } else {
+            throw new IllegalStateException(
+                    "No active transaction while MongoDB Auditing. Try updating collection: '"
+                            + event.getCollectionName()
+                            + "' in a Transaction");
         }
-        return createAuditEntryOnAfterDelete(event, attempt + 1);
-      }
-    } else {
-      throw new IllegalStateException(
-          "No active transaction while MongoDB Auditing. Try updating collection: '"
-              + event.getCollectionName()
-              + "' in a Transaction");
     }
-  }
 
-  private boolean validateTransaction() {
-    return TransactionSynchronizationManager.isActualTransactionActive()
-        || this.mongoAuditProperties.getAuditing().isWithoutTransaction();
-  }
-
-  @Override
-  public void afterPropertiesSet() {
-    Assert.state(this.mongoOperations != null, "A MongoOperations implementation is required.");
-    if (StringUtils.isBlank(this.mongoAuditProperties.getAuditing().getPrefix())
-        && StringUtils.isBlank(this.mongoAuditProperties.getAuditing().getSuffix())) {
-      throw new IllegalArgumentException(
-          "At-least one of 'mongodb.auditing.prefix' or 'mongodb.auditing.suffix' properties must not be null or empty");
+    @EventListener(
+            condition =
+                    "T(com.ksoot.hammer.config.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
+    public void onAfterDelete(final AfterDeleteEvent<Versionable<Long>> event) {
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    String.format(
+                            "onAfterDelete: %s, %s",
+                            event.getSource(), serializeToJsonSafely(event.getDocument())));
+        }
+        final AuditEvent auditEvent = this.createAuditEntryOnAfterDelete(event, 0);
     }
-    System.out.println(Product.class.isAnnotationPresent(Auditable.class));
-    Map<String, String> auditMetaData = new HashMap<>();
-    MappingContext<?, ?> mappingContext = this.mongoOperations.getConverter().getMappingContext();
-    mappingContext.getPersistentEntities().stream()
-        .filter(entity -> {
-//          AnnotationUtils.
-          System.out.println(entity.isAnnotationPresent(Document.class));
-          boolean boo = entity.isAnnotationPresent(com.ksoot.mongodb.Auditable.class);
-          boo = entity.getTypeInformation().getType().isAnnotationPresent(com.ksoot.mongodb.Auditable.class);
 
-          Auditable auditable =
-                  AnnotationUtils.findAnnotation(entity.getType(), Auditable.class);
-          return boo;
-        })
-        .forEach(
-            entity -> {
-              Auditable auditable =
-                  AnnotationUtils.findAnnotation(entity.getType(), Auditable.class);
-              String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
-              String auditCollectionName;
-              if (StringUtils.isNotBlank(auditable.auditCollectionName())) {
-                auditCollectionName = auditable.auditCollectionName();
-              } else {
-                auditCollectionName =
-                    this.mongoAuditProperties.getAuditing().getPrefix()
-                        + collectionName
-                        + this.mongoAuditProperties.getAuditing().getSuffix();
-              }
-              this.createAuditCollectionIfDoesNotExist(auditCollectionName);
-              auditMetaData.put(collectionName, auditCollectionName);
-            });
-    AUDIT_META_DATA = Collections.unmodifiableMap(auditMetaData);
-  }
-
-  // Create Audit collection and indexes if it does not exist
-  private void createAuditCollectionIfDoesNotExist(final String auditCollectionName) {
-    if (!this.mongoOperations.collectionExists(auditCollectionName)) {
-      this.mongoOperations.createCollection(auditCollectionName);
-
-      Index indexDatetime = new Index().named("idx_datetime").on("datetime", Sort.Direction.ASC);
-      this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexDatetime);
-
-      Index indexActor = new Index().named("idx_actor").on("actor", Sort.Direction.ASC);
-      this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexActor);
-
-      Index indexUnqRevision =
-          new Index().named("idx_unq_revision").on("revision", Sort.Direction.ASC).unique();
-      this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexUnqRevision);
+    private AuditEvent createAuditEntryOnAfterDelete(
+            final AfterDeleteEvent<Versionable<Long>> event, final int attempt) {
+        if (this.validateTransaction()) {
+            String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
+            try {
+                long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
+                final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision);
+                return this.mongoOperations.insert(auditEvent, auditCollectionName);
+            } catch (final DuplicateKeyException exception) {
+                if (attempt > 2) { // Max three attempts
+                    throw new IllegalStateException(
+                            "Non recoverable Race condition in MongoDB Auditing, "
+                                    + "while getting next revision number for collection: '"
+                                    + auditCollectionName
+                                    + "'");
+                }
+                return createAuditEntryOnAfterDelete(event, attempt + 1);
+            }
+        } else {
+            throw new IllegalStateException(
+                    "No active transaction while MongoDB Auditing. Try updating collection: '"
+                            + event.getCollectionName()
+                            + "' in a Transaction");
+        }
     }
-  }
+
+    private boolean validateTransaction() {
+        return TransactionSynchronizationManager.isActualTransactionActive()
+                || this.mongoAuditProperties.getAuditing().isWithoutTransaction();
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        Assert.state(this.mongoOperations != null, "A MongoOperations implementation is required.");
+        if (StringUtils.isBlank(this.mongoAuditProperties.getAuditing().getPrefix())
+                && StringUtils.isBlank(this.mongoAuditProperties.getAuditing().getSuffix())) {
+            throw new IllegalArgumentException(
+                    "At-least one of 'mongodb.auditing.prefix' or 'mongodb.auditing.suffix' properties must not be null or empty");
+        }
+        Map<String, String> auditMetaData = new HashMap<>();
+        MappingContext<?, ?> mappingContext = this.mongoOperations.getConverter().getMappingContext();
+        mappingContext.getPersistentEntities().stream()
+                .filter(entity -> {
+                    boolean boo = entity.isAnnotationPresent(Audited.class);
+                    boo = entity.getType().isAnnotationPresent(Audited.class);
+                    return boo;
+                })
+                .forEach(
+                        entity -> {
+                            Audited auditable =
+                                    AnnotationUtils.findAnnotation(entity.getType(), Audited.class);
+                            String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
+                            String auditCollectionName;
+                            if (StringUtils.isNotBlank(auditable.name())) {
+                                auditCollectionName = auditable.name();
+                            } else {
+                                auditCollectionName =
+                                        this.mongoAuditProperties.getAuditing().getPrefix()
+                                                + collectionName
+                                                + this.mongoAuditProperties.getAuditing().getSuffix();
+                            }
+                            this.createAuditCollectionIfDoesNotExist(auditCollectionName);
+                            auditMetaData.put(collectionName, auditCollectionName);
+                        });
+        AUDIT_META_DATA = Collections.unmodifiableMap(auditMetaData);
+    }
+
+    // Create Audit collection and indexes if it does not exist
+    private void createAuditCollectionIfDoesNotExist(final String auditCollectionName) {
+        if (!this.mongoOperations.collectionExists(auditCollectionName)) {
+            log.info("Created Audit collection: " + auditCollectionName);
+            this.mongoOperations.createCollection(auditCollectionName);
+
+            Index indexDatetime = new Index().named("idx_datetime").on("datetime", Sort.Direction.ASC);
+            this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexDatetime);
+
+            Index indexActor = new Index().named("idx_actor").on("actor", Sort.Direction.ASC);
+            this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexActor);
+
+            Index indexUnqRevision =
+                    new Index().named("idx_unq_revision").on("revision", Sort.Direction.ASC).unique();
+            this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexUnqRevision);
+        }
+    }
 }

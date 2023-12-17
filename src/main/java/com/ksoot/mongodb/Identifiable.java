@@ -24,5 +24,5 @@ import java.io.Serializable;
  */
 public interface Identifiable<I extends Comparable<I> & Serializable> {
 
-	I getId();
+    I getId();
 }

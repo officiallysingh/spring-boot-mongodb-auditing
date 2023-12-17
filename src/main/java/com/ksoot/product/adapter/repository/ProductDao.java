@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductDao {
 
-  Page<Product> findPage(
-      final List<String> phrases,
-      final Pageable pageRequest);
+    Page<Product> findPage(
+            final List<String> phrases,
+            final Pageable pageRequest);
 }

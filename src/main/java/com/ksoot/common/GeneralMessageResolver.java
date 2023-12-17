@@ -5,7 +5,7 @@ package com.ksoot.common;
  */
 public enum GeneralMessageResolver implements MessageResolver {
 
-  // @formatter:off
+    // @formatter:off
   RECORD_CREATED("record.created.successfully", "Record created successfully"),
   RECORD_UPDATED("record.updated.successfully", "Record updated successfully"),
   RECORD_DELETED("record.deleted.successfully", "Record deleted successfully"),
@@ -13,22 +13,22 @@ public enum GeneralMessageResolver implements MessageResolver {
   NO_RECORD_FOUND("no.record.found", "No such record exists");
   // @formatter:on
 
-  private String messageCode;
+    private String messageCode;
 
-  private String defaultMessage;
+    private String defaultMessage;
 
-  private GeneralMessageResolver(final String messageCode, final String defaultMessage) {
-    this.messageCode = messageCode;
-    this.defaultMessage = defaultMessage;
-  }
+    private GeneralMessageResolver(final String messageCode, final String defaultMessage) {
+        this.messageCode = messageCode;
+        this.defaultMessage = defaultMessage;
+    }
 
-  @Override
-  public String messageCode() {
-    return this.messageCode;
-  }
+    @Override
+    public String messageCode() {
+        return this.messageCode;
+    }
 
-  @Override
-  public String defaultMessage() {
-    return this.defaultMessage;
-  }
+    @Override
+    public String defaultMessage() {
+        return this.defaultMessage;
+    }
 }
