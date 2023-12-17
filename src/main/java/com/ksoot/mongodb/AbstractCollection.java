@@ -13,14 +13,13 @@ public abstract class AbstractCollection implements Identifiable<String>, Versio
 
     @Id
     protected String id;
+    @Version
+    protected Long version;
 
     @Override
     public String getId() {
         return this.id;
     }
-
-    @Version
-    protected Long version;
 
     @Override
     public Long getVersion() {

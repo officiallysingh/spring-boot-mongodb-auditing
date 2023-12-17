@@ -11,110 +11,108 @@
 # If no profile is specified explicitly, application will fall back to default profile, which is "local"
 
 spring:
-    application:
-        name: spring-boot-mongodb-auditing
-    devtools:
-        add-properties: false
-        restart:
-            enabled: false
-            exclude: logs/*,application.log,*.log,*.log.*
-    autoconfigure:
-        exclude:
-            - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
-            - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-            - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-            - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
-            - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
-            - org.springframework.cloud.openfeign.hateoas.FeignHalAutoConfiguration
+  application:
+    name: spring-boot-mongodb-auditing
+  devtools:
+    add-properties: false
+    restart:
+      enabled: false
+      exclude: logs/*,application.log,*.log,*.log.*
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.cloud.openfeign.hateoas.FeignHalAutoConfiguration
 
-    #------------------------- MongoDB configuration -------------------------
-    data:
-        mongodb:
-            uri: ${MONGODB_URL:mongodb://localhost:27017}
-            database: ${MONGODB_DATABASE:product_db}
-            auto-index-creation: true
-            uuid-representation: standard
+  #------------------------- MongoDB configuration -------------------------
+  data:
+    mongodb:
+      uri: ${MONGODB_URL:mongodb://localhost:27017}
+      database: ${MONGODB_DATABASE:product_db}
+      auto-index-creation: true
+      uuid-representation: standard
 
-    messages:
-        basename: i18n/messages,i18n/errors,i18n/problems
-        cache-duration: PT10S # 10 second, see the ISO 8601 standard
-        fallback-to-system-locale: true
-        always-use-message-format: false
-        use-code-as-default-message: false
-    main:
-        log-startup-info: true
-    task:
-        execution:
-            thread-name-prefix: spring-task-executor-
-            pool:
-                core-size: 8
-                max-size: 32
-                queue-capacity: 10000
-                keep-alive: "10s"    
-    jackson:
-        serialization:
-            write-dates-with-zone-id: true
-            write-dates-as-timestamps: false
+  messages:
+    basename: i18n/messages,i18n/errors,i18n/problems
+    cache-duration: PT10S # 10 second, see the ISO 8601 standard
+    fallback-to-system-locale: true
+    always-use-message-format: false
+    use-code-as-default-message: false
+  main:
+    log-startup-info: true
+  task:
+    execution:
+      thread-name-prefix: spring-task-executor-
+      pool:
+        core-size: 8
+        max-size: 32
+        queue-capacity: 10000
+        keep-alive: "10s"
+  jackson:
+    serialization:
+      write-dates-with-zone-id: true
+      write-dates-as-timestamps: false
     #hateoas:
-        #use-hal-as-default-json-media-type: false
-    mvc:
-        pathmatch:
-            matching-strategy: ant-path-matcher
-        problemdetails:
-            enabled: false
-        throw-exception-if-no-handler-found: true
-    threads:
-        virtual:
-            enabled: true
+    #use-hal-as-default-json-media-type: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+    problemdetails:
+      enabled: false
+    throw-exception-if-no-handler-found: true
+  threads:
+    virtual:
+      enabled: true
 
 #------------------------- Swagger configuration -------------------------
 springdoc:
-    show-actuator: true
-    group-configs:
-        -
-            group: actuator
-            display-name: Actuator
-            paths-to-match: /actuator/**
-        -
-            group: product
-            display-name: Product
-            paths-to-match: /**/products/**
-    swagger-ui:
-        syntaxHighlight:
-            activated: true
+  show-actuator: true
+  group-configs:
+    - group: actuator
+      display-name: Actuator
+      paths-to-match: /actuator/**
+    - group: product
+      display-name: Product
+      paths-to-match: /**/products/**
+  swagger-ui:
+    syntaxHighlight:
+      activated: true
 
 #------------------------- Actuators configuration -------------------------
 # If not specified '/actuator' is taken as default. If specified must start with '/'
 #management.endpoints.web.base-path=/
 # Set it as "*", if you want to expose all actuator endpoints
 management:
-    endpoint:
-        health:
-            probes:
-                enabled: true
-    endpoints:
-        web:
-            exposure:
-                include: info,health,metrics
-    metrics:
-        tags:
-            application: ${spring.application.name}
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info,health,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 problem:
-    type-url: http://localhost:8080/problems/help.html
-    debug-enabled: false
-    stacktrace-enabled: false
-    cause-chains-enabled: false
+  type-url: http://localhost:8080/problems/help.html
+  debug-enabled: false
+  stacktrace-enabled: false
+  cause-chains-enabled: false
 
 server:
-    port: 8080
-    forward-headers-strategy: framework
+  port: 8080
+  forward-headers-strategy: framework
 #    servlet:
 #        context-path: /api
 logging:
-    level:
-        ROOT: DEBUG
-        '[org.mongodb.driver]': warn
+  level:
+    ROOT: DEBUG
+    '[org.mongodb.driver]': warn
 #        '[org.springframework.data.mongodb.core.MongoTemplate]': debug
 debug: false
 
@@ -124,10 +122,10 @@ debug: false
 # ===================================================================
 
 application:
-    mongodb:
-#        entity-base-packages:
-#            - com.ksoot.product
-        auditing:
-            enabled: true
+  mongodb:
+    #        entity-base-packages:
+    #            - com.ksoot
+    auditing:
+      enabled: true
 #            prefix:
 #            suffix: _aud

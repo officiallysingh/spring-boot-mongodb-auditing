@@ -17,49 +17,46 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString
 @ConfigurationProperties(
-    prefix = "management.endpoints.web",
-    ignoreInvalidFields = true)
+        prefix = "management.endpoints.web",
+        ignoreInvalidFields = true)
 @Valid
 public class ActuatorEndpointProperties {
 
-  private String basePath = "/actuator";
+    static final List<String> ALL_ENDPOINTS =
+            Arrays.asList(
+                    "auditevents",
+                    "beans",
+                    "caches",
+                    "conditions",
+                    "configprops",
+                    "env",
+                    "flyway",
+                    "health",
+                    "heapdump",
+                    "httptrace",
+                    "info",
+                    "integrationgraph",
+                    "liquibase",
+                    "logfile",
+                    "loggers",
+                    "mappings",
+                    "metrics",
+                    "prometheus",
+                    "scheduledtasks",
+                    "sessions",
+                    "shutdown",
+                    "threaddump");
+    private String basePath = "/actuator";
+    private Exposure exposure = new Exposure();
+    private Map<String, String> pathMapping = Collections.emptyMap();
 
-  private Exposure exposure = new Exposure();
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    @Valid
+    public static class Exposure {
 
-  private Map<String, String> pathMapping = Collections.emptyMap();
-
-  static final List<String> ALL_ENDPOINTS =
-      Arrays.asList(
-          "auditevents",
-          "beans",
-          "caches",
-          "conditions",
-          "configprops",
-          "env",
-          "flyway",
-          "health",
-          "heapdump",
-          "httptrace",
-          "info",
-          "integrationgraph",
-          "liquibase",
-          "logfile",
-          "loggers",
-          "mappings",
-          "metrics",
-          "prometheus",
-          "scheduledtasks",
-          "sessions",
-          "shutdown",
-          "threaddump");
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @ToString
-  @Valid
-  public static class Exposure {
-
-    private List<String> include = ALL_ENDPOINTS;
-  }
+        private List<String> include = ALL_ENDPOINTS;
+    }
 }

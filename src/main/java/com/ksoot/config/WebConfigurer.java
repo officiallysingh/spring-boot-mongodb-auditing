@@ -27,61 +27,61 @@ import java.util.List;
 @AutoConfigureAfter(value = {GeneralAutoConfiguration.class})
 public class WebConfigurer implements ServletContextInitializer, WebMvcConfigurer {
 
-  private final Environment env;
+    private final Environment env;
 
-  private final ActuatorEndpointProperties actuatorEndpointProperties;
+    private final ActuatorEndpointProperties actuatorEndpointProperties;
 
-  private List<HandlerMethodArgumentResolver> customArgumentResolvers;
+    private List<HandlerMethodArgumentResolver> customArgumentResolvers;
 
-  private List<HandlerInterceptor> customInterceptors;
+    private List<HandlerInterceptor> customInterceptors;
 
-  public WebConfigurer(
-      final Environment env,
-      @Nullable final ActuatorEndpointProperties actuatorEndpointProperties,
-      @Nullable final List<HandlerMethodArgumentResolver> customArgumentResolvers,
-      @Nullable final List<HandlerInterceptor> customInterceptors) {
-    this.env = env;
-    this.actuatorEndpointProperties = actuatorEndpointProperties;
-    this.customArgumentResolvers = customArgumentResolvers;
-    this.customInterceptors = customInterceptors;
-  }
-
-  @Override
-  public void onStartup(final ServletContext servletContext) throws ServletException {
-    if (this.env.getActiveProfiles().length != 0) {
-      log.info(
-          "Web application configuration, using profiles: {}",
-          (Object[]) this.env.getActiveProfiles());
+    public WebConfigurer(
+            final Environment env,
+            @Nullable final ActuatorEndpointProperties actuatorEndpointProperties,
+            @Nullable final List<HandlerMethodArgumentResolver> customArgumentResolvers,
+            @Nullable final List<HandlerInterceptor> customInterceptors) {
+        this.env = env;
+        this.actuatorEndpointProperties = actuatorEndpointProperties;
+        this.customArgumentResolvers = customArgumentResolvers;
+        this.customInterceptors = customInterceptors;
     }
 
-    // App initialization and logging startup info
-    AppInitializer.initialize(this.env, WebApplicationType.SERVLET);
+    @Override
+    public void onStartup(final ServletContext servletContext) throws ServletException {
+        if (this.env.getActiveProfiles().length != 0) {
+            log.info(
+                    "Web application configuration, using profiles: {}",
+                    (Object[]) this.env.getActiveProfiles());
+        }
 
-    log.info("Web application fully configured");
-  }
+        // App initialization and logging startup info
+        AppInitializer.initialize(this.env, WebApplicationType.SERVLET);
 
-  @Override
-  public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> argumentResolvers) {
-    if (!CollectionUtils.isEmpty(this.customArgumentResolvers)) {
-      this.customArgumentResolvers.forEach(argumentResolvers::add);
+        log.info("Web application fully configured");
     }
-    // Add any custom method argument resolvers
-  }
 
-  @Override
-  public void addInterceptors(final InterceptorRegistry registry) {
-    if (CollectionUtils.isNotEmpty(this.customInterceptors)) {
-      for (HandlerInterceptor interceptor : this.customInterceptors) {
-        registry
-            .addInterceptor(interceptor)
-            .addPathPatterns("/**")
-            .excludePathPatterns(ActuatorUtils.getPaths(this.actuatorEndpointProperties));
-      }
+    @Override
+    public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> argumentResolvers) {
+        if (!CollectionUtils.isEmpty(this.customArgumentResolvers)) {
+            this.customArgumentResolvers.forEach(argumentResolvers::add);
+        }
+        // Add any custom method argument resolvers
     }
-  }
 
-  // @Override
-  // public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-  // configurer.defaultContentType(MediaType.APPLICATION_JSON);
-  // }
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        if (CollectionUtils.isNotEmpty(this.customInterceptors)) {
+            for (HandlerInterceptor interceptor : this.customInterceptors) {
+                registry
+                        .addInterceptor(interceptor)
+                        .addPathPatterns("/**")
+                        .excludePathPatterns(ActuatorUtils.getPaths(this.actuatorEndpointProperties));
+            }
+        }
+    }
+
+    // @Override
+    // public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    // configurer.defaultContentType(MediaType.APPLICATION_JSON);
+    // }
 }

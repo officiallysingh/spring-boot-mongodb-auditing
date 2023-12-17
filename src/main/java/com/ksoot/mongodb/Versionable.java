@@ -24,5 +24,5 @@ import java.io.Serializable;
  */
 public interface Versionable<V extends Comparable<V> & Serializable> {
 
-	V getVersion();
+    V getVersion();
 }
