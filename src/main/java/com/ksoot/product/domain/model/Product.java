@@ -1,10 +1,11 @@
 package com.ksoot.product.domain.model;
 
 import com.ksoot.mongodb.AbstractCollection;
-import com.ksoot.mongodb.Audited;
+import com.ksoot.mongodb.Auditable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.TextScore;
@@ -19,8 +20,8 @@ import java.util.Map;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 //@AllArgsConstructor(staticName = "of")
 @Document(collection = "products")
-//@TypeAlias("product")
-@Audited
+@TypeAlias("product")
+@Auditable
 public class Product extends AbstractCollection {
 
     @NotEmpty
