@@ -41,12 +41,6 @@ class MongoDBConfig extends AbstractMongoClientConfiguration {
                 .uuidRepresentation(this.mongoProperties.getUuidRepresentation());
     }
 
-    //  @Bean
-    //  @Override
-    //  public MongoClient mongoClient() {
-    //    return super.mongoClient();
-    //  }
-
     @Override
     protected boolean autoIndexCreation() {
         return this.mongoProperties.isAutoIndexCreation();

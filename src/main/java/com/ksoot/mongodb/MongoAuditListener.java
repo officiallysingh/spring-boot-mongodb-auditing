@@ -2,12 +2,12 @@ package com.ksoot.mongodb;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.context.MappingContext;
@@ -21,9 +21,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.query.SerializationUtils.serializeToJsonSafely;
 
@@ -133,29 +132,34 @@ class MongoAuditListener implements InitializingBean {
         Map<String, String> auditMetaData = new HashMap<>();
         MappingContext<?, ?> mappingContext = this.mongoOperations.getConverter().getMappingContext();
         mappingContext.getPersistentEntities().stream()
-                .filter(entity -> {
-                    boolean boo = entity.isAnnotationPresent(Audited.class);
-                    boo = entity.getType().isAnnotationPresent(Audited.class);
-                    return boo;
-                })
                 .forEach(
                         entity -> {
-                            Audited auditable =
-                                    AnnotationUtils.findAnnotation(entity.getType(), Audited.class);
-                            String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
-                            String auditCollectionName;
-                            if (StringUtils.isNotBlank(auditable.name())) {
-                                auditCollectionName = auditable.name();
-                            } else {
-                                auditCollectionName =
-                                        this.mongoAuditProperties.getAuditing().getPrefix()
-                                                + collectionName
-                                                + this.mongoAuditProperties.getAuditing().getSuffix();
-                            }
-                            this.createAuditCollectionIfDoesNotExist(auditCollectionName);
-                            auditMetaData.put(collectionName, auditCollectionName);
+                            this.getAuditableAnnotation((BasicMongoPersistentEntity) entity).ifPresent(auditable -> {
+                                String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
+                                String auditCollectionName;
+                                if (StringUtils.isNotBlank(auditable.name())) {
+                                    auditCollectionName = auditable.name();
+                                } else {
+                                    auditCollectionName =
+                                            this.mongoAuditProperties.getAuditing().getPrefix()
+                                                    + collectionName
+                                                    + this.mongoAuditProperties.getAuditing().getSuffix();
+                                }
+                                this.createAuditCollectionIfDoesNotExist(auditCollectionName);
+                                auditMetaData.put(collectionName, auditCollectionName);
+                            });
                         });
         AUDIT_META_DATA = Collections.unmodifiableMap(auditMetaData);
+    }
+
+    private Optional<Auditable> getAuditableAnnotation(final BasicMongoPersistentEntity<?> entity) {
+        String className = entity.getType().getName();
+        try {
+            Class<?> clazz = Class.forName(className);
+            return Optional.ofNullable(clazz.getAnnotation(Auditable.class));
+        } catch (final ClassNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     // Create Audit collection and indexes if it does not exist
