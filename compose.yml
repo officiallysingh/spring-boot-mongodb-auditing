@@ -1,32 +1,23 @@
 version: '3.8'
 
 services:
-  mongodb-primary:
+  mongodb:
     image: mongo:latest
-    container_name: mongodb-primary
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
-      - '20000:27017'
-    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+      - 27017:27017
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      retries: 30
     volumes:
-      - mongodb-primary-vol:/data/db
-
-  mongodb-secondary:
-    image: mongo:latest
-    container_name: mongodb-secondary
-    ports:
-      - '20001:27017'
-    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
-    volumes:
-      - mongodb-secondary-vol:/data/db
-    depends_on:
-      - mongodb-primary
-
-networks:
-  default:
-    name: my-network
+      - "mongodb_data:/data/db"
+      - "mongodb_config:/data/configdb"
 
 volumes:
-  mongodb-primary-vol:
-    driver: local
-  mongodb-secondary-vol:
-    driver: local
+  mongodb_data:
+  mongodb_config:
