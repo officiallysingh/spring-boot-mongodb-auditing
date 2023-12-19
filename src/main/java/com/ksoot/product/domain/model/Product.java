@@ -1,6 +1,6 @@
 package com.ksoot.product.domain.model;
 
-import com.ksoot.mongodb.AbstractCollection;
+import com.ksoot.mongodb.AbstractEntity;
 import com.ksoot.mongodb.Auditable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Document(collection = "products")
 @TypeAlias("product")
 @Auditable
-public class Product extends AbstractCollection {
+public class Product extends AbstractEntity {
 
     @NotEmpty
     @Size(min = 2, max = 256)

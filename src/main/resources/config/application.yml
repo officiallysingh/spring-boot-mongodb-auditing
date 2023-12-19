@@ -111,7 +111,7 @@ server:
 #        context-path: /api
 logging:
   level:
-    ROOT: DEBUG
+    ROOT: info
     '[org.mongodb.driver]': warn
 #        '[org.springframework.data.mongodb.core.MongoTemplate]': debug
 debug: false

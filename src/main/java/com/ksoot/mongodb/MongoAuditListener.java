@@ -2,7 +2,6 @@ package com.ksoot.mongodb;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,8 +20,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.springframework.data.mongodb.core.query.SerializationUtils.serializeToJsonSafely;
 
@@ -38,10 +40,10 @@ class MongoAuditListener implements InitializingBean {
 
     private final MongoOperations mongoOperations;
 
-    @EventListener(
-            condition =
-                    "T(com.ksoot.hammer.config.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
-    public void onAfterSave(final AfterSaveEvent<Versionable<Long>> event) {
+    private static final Supplier<String> auditUserSupplier = IdentityHelper::getAuditUserId;
+
+    @EventListener(condition = "@mongoAuditListener.AUDIT_META_DATA.containsKey(#event.getCollectionName())")
+    public void onAfterSave(final AfterSaveEvent<?> event) {
         if (log.isDebugEnabled()) {
             log.debug(
                     String.format(
@@ -52,12 +54,12 @@ class MongoAuditListener implements InitializingBean {
     }
 
     private AuditEvent createAuditEntryOnAfterSave(
-            final AfterSaveEvent<Versionable<Long>> event, final int attempt) {
+            final AfterSaveEvent<?> event, final int attempt) {
         if (this.validateTransaction()) {
             String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision);
+                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, auditUserSupplier);
                 return this.mongoOperations.insert(auditEvent, auditCollectionName);
             } catch (final DuplicateKeyException exception) {
                 if (attempt > 2) { // Max three attempts
@@ -77,10 +79,8 @@ class MongoAuditListener implements InitializingBean {
         }
     }
 
-    @EventListener(
-            condition =
-                    "T(com.ksoot.hammer.config.MongoAuditListener).AUDIT_META_DATA.containsKey(#event.getCollectionName())")
-    public void onAfterDelete(final AfterDeleteEvent<Versionable<Long>> event) {
+    @EventListener(condition = "@mongoAuditListener.AUDIT_META_DATA.containsKey(#event.getCollectionName())")
+    public void onAfterDelete(final AfterDeleteEvent<?> event) {
         if (log.isDebugEnabled()) {
             log.debug(
                     String.format(
@@ -91,12 +91,12 @@ class MongoAuditListener implements InitializingBean {
     }
 
     private AuditEvent createAuditEntryOnAfterDelete(
-            final AfterDeleteEvent<Versionable<Long>> event, final int attempt) {
+            final AfterDeleteEvent<?> event, final int attempt) {
         if (this.validateTransaction()) {
             String auditCollectionName = AUDIT_META_DATA.get(event.getCollectionName());
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-                final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision);
+                final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision, auditUserSupplier);
                 return this.mongoOperations.insert(auditEvent, auditCollectionName);
             } catch (final DuplicateKeyException exception) {
                 if (attempt > 2) { // Max three attempts
@@ -133,22 +133,22 @@ class MongoAuditListener implements InitializingBean {
         MappingContext<?, ?> mappingContext = this.mongoOperations.getConverter().getMappingContext();
         mappingContext.getPersistentEntities().stream()
                 .forEach(
-                        entity -> {
-                            this.getAuditableAnnotation((BasicMongoPersistentEntity) entity).ifPresent(auditable -> {
-                                String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
-                                String auditCollectionName;
-                                if (StringUtils.isNotBlank(auditable.name())) {
-                                    auditCollectionName = auditable.name();
-                                } else {
-                                    auditCollectionName =
-                                            this.mongoAuditProperties.getAuditing().getPrefix()
-                                                    + collectionName
-                                                    + this.mongoAuditProperties.getAuditing().getSuffix();
-                                }
-                                this.createAuditCollectionIfDoesNotExist(auditCollectionName);
-                                auditMetaData.put(collectionName, auditCollectionName);
-                            });
-                        });
+                        entity ->
+                                this.getAuditableAnnotation((BasicMongoPersistentEntity) entity).ifPresent(auditable -> {
+                                    String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
+                                    String auditCollectionName;
+                                    if (StringUtils.isNotBlank(auditable.name())) {
+                                        auditCollectionName = auditable.name();
+                                    } else {
+                                        auditCollectionName =
+                                                this.mongoAuditProperties.getAuditing().getPrefix()
+                                                        + collectionName
+                                                        + this.mongoAuditProperties.getAuditing().getSuffix();
+                                    }
+                                    this.createAuditCollectionIfDoesNotExist(auditCollectionName);
+                                    auditMetaData.put(collectionName, auditCollectionName);
+                                })
+                );
         AUDIT_META_DATA = Collections.unmodifiableMap(auditMetaData);
     }
 

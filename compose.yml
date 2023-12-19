@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongodb-primary:
+    image: mongo:latest
+    container_name: mongodb-primary
+    ports:
+      - '20000:27017'
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    volumes:
+      - mongodb-primary-vol:/data/db
+
+  mongodb-secondary:
+    image: mongo:latest
+    container_name: mongodb-secondary
+    ports:
+      - '20001:27017'
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    volumes:
+      - mongodb-secondary-vol:/data/db
+    depends_on:
+      - mongodb-primary
+
+networks:
+  default:
+    name: my-network
+
+volumes:
+  mongodb-primary-vol:
+    driver: local
+  mongodb-secondary-vol:
+    driver: local

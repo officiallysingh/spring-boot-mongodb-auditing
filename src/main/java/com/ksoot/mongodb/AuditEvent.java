@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.function.Supplier;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
@@ -49,20 +50,18 @@ public class AuditEvent implements Identifiable<String> {
     private Document source;
 
     public static AuditEvent of(final Type type, final Long timestamp, final Long revision, final String collectionName,
-                                final Document source) {
-        return new AuditEvent(null, Instant.ofEpochMilli(timestamp).atOffset(DateTimeUtils.SYSTEM_OFFSET_ID), CommonConstants.SYSTEM_USER,
+                                final Document source, final Supplier<String> auditUserSupplier) {
+        return new AuditEvent(null, Instant.ofEpochMilli(timestamp).atOffset(DateTimeUtils.SYSTEM_OFFSET_ID), auditUserSupplier.get(),
                 revision, type, collectionName, source);
     }
 
-    public static AuditEvent ofSaveEvent(final AfterSaveEvent<Versionable<Long>> event, Long revision) {
-//        event.getDocument().
-        Long version = event.getSource().getVersion();
-        return of(version == 0 ? Type.CREATED : Type.UPDATED, event.getTimestamp(), revision,
-                event.getCollectionName(), event.getDocument());
+    public static AuditEvent ofSaveEvent(final AfterSaveEvent<?> event, final Long revision, final Supplier<String> auditUserSupplier) {
+        return of(revision == 1 ? Type.CREATED : Type.UPDATED, event.getTimestamp(), revision,
+                event.getCollectionName(), event.getDocument(), auditUserSupplier);
     }
 
-    public static AuditEvent ofDeleteEvent(final AfterDeleteEvent<Versionable<Long>> event, Long revision) {
-        return of(Type.DELETED, event.getTimestamp(), revision, event.getCollectionName(), event.getDocument());
+    public static AuditEvent ofDeleteEvent(final AfterDeleteEvent<?> event, final Long revision, final Supplier<String> auditUserSupplier) {
+        return of(Type.DELETED, event.getTimestamp(), revision, event.getCollectionName(), event.getDocument(), auditUserSupplier);
     }
 
     public enum Type {

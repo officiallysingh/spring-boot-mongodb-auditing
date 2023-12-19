@@ -1,0 +1,39 @@
+spring:
+  docker:
+    compose:
+      enabled: true
+      file: spring-boot-mongodb-auditing/compose.yml
+  data:
+    mongodb:
+#      uri: mongodb://localhost:27017/product_db?replicaSet=rs0
+      uri: mongodb://mongodb-primary:20000,mongodb-secondary:20000/product_db?replicaSet=rs0
+#      uri: mongodb://127.0.0.1:20000,127.0.0.1:20000/product_db?replicaSet=rs0
+problem:
+  type-url: http://localhost:8080/problems/help.html
+  debug-enabled: false
+  stacktrace-enabled: false
+  cause-chains-enabled: false
+
+#server:
+#  port: 8080
+    #servlet:
+  #context-path:
+
+logging:
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
+  file:
+    path: logs
+    name: ${logging.file.path}/application.log
+    clean-history-on-start: true
+  level:
+    ROOT: info
+debug: false
+
+  # ===================================================================
+  # Application specific properties
+  # Add your own application properties here
+  # ===================================================================
+
+        

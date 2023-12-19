@@ -9,10 +9,11 @@ import org.springframework.data.annotation.Version;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public abstract class AbstractCollection implements Identifiable<String>, Versionable<Long> {
+public abstract class AbstractEntity implements Identifiable<String>, Versionable<Long> {
 
     @Id
     protected String id;
+
     @Version
     protected Long version;
 
