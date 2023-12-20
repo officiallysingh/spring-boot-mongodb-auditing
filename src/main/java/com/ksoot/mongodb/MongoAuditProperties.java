@@ -22,7 +22,7 @@ import java.util.List;
 @Valid
 public class MongoAuditProperties {
 
-    private List<String> entityBasePackages = List.of("com.ksoot");
+    private List<String> entityBasePackages;
 
     private Auditing auditing = new Auditing();
 

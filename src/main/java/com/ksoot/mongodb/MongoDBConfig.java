@@ -4,6 +4,7 @@ import com.ksoot.common.DateTimeUtils;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +21,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @EnableConfigurationProperties({MongoProperties.class, MongoAuditProperties.class})
 @Configuration
@@ -53,7 +51,14 @@ class MongoDBConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected Collection<String> getMappingBasePackages() {
-        return this.mongoAuditProperties.getEntityBasePackages();
+        return CollectionUtils.isNotEmpty(this.mongoAuditProperties.getEntityBasePackages())
+                ? this.mongoAuditProperties.getEntityBasePackages() : Collections.singleton(this.getDefaultPackageName());
+    }
+
+    private String getDefaultPackageName() {
+        String mainClassName = System.getProperty("sun.java.command");
+        String defaultPackageName = mainClassName.substring(0, mainClassName.lastIndexOf('.'));
+        return defaultPackageName;
     }
 
     @Bean
