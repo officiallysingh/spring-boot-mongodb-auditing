@@ -34,11 +34,9 @@ spring:
       database: ${MONGODB_DATABASE:product_db}
       auto-index-creation: true
       uuid-representation: standard
-
   docker:
     compose:
       enabled: false
-
   messages:
     basename: i18n/messages,i18n/errors,i18n/problems
     cache-duration: PT10S # 10 second, see the ISO 8601 standard
