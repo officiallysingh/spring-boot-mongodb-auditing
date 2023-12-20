@@ -5,6 +5,7 @@ import com.ksoot.mongodb.AuditMetaData;
 import com.ksoot.problem.core.Problems;
 import com.ksoot.product.util.AppErrors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,7 @@ public class AuditHistoryRepository {
 
     public Page<AuditEvent> getAuditHistory(final String collectionName,
                                             final AuditEvent.Type type,
+                                            final List<Long> revisions,
                                             final String actor,
                                             final OffsetDateTime fromDateTime,
                                             final OffsetDateTime tillDateTime,
@@ -39,11 +41,14 @@ public class AuditHistoryRepository {
 
         String auditCollectionName = this.auditMetaData.getAuditCollection(collectionName).get();
         final Query query = new Query();
-//        if (StringUtils.isNotBlank(collectionName)) {
-//            query.addCriteria(Criteria.where("collectionName").is(collectionName));
-//        }
+        if (StringUtils.isNotBlank(collectionName)) {
+            query.addCriteria(Criteria.where("collectionName").is(collectionName));
+        }
         if (Objects.nonNull(type)) {
             query.addCriteria(Criteria.where("type").is(type));
+        }
+        if (CollectionUtils.isNotEmpty(revisions)) {
+            query.addCriteria(Criteria.where("revision").in(revisions));
         }
         if (StringUtils.isNotBlank(actor)) {
             query.addCriteria(Criteria.where("actor").is(actor));

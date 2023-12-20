@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +18,11 @@ public class AuditHistoryService {
 
     public Page<AuditEvent> getAuditHistory(final String collectionName,
                                             final AuditEvent.Type type,
+                                            final List<Long> revisions,
                                             final String actor,
                                             final OffsetDateTime fromDateTime,
                                             final OffsetDateTime tillDateTime,
                                             final Pageable pageRequest) {
-        return this.auditHistoryRepository.getAuditHistory(collectionName, type, actor, fromDateTime, tillDateTime, pageRequest);
+        return this.auditHistoryRepository.getAuditHistory(collectionName, type, revisions, actor, fromDateTime, tillDateTime, pageRequest);
     }
 }

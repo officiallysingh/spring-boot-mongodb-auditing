@@ -22,13 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static com.ksoot.common.ApiConstants.INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE;
 import static com.ksoot.common.CommonConstants.DEFAULT_PAGE_SIZE;
 
 @RestController
 @RequestMapping("/v1/audit-history")
-@Tag(name = "Audit History", description = "fetching APIs")
+@Tag(name = "Audit History", description = "query APIs")
 @RequiredArgsConstructor
 class AuditHistoryController {
 
@@ -54,6 +55,8 @@ class AuditHistoryController {
             @RequestParam final String collectionName,
             @Parameter(description = "Audit Event type.")
             @RequestParam(required = false) final AuditEvent.Type type,
+            @Parameter(description = "Audit Revisions.")
+            @RequestParam(required = false) final List<Long> revisions,
             @Parameter(description = "Audit Username. E.g. <b>SYSTEM</b>")
             @RequestParam(required = false) final String actor,
             @Parameter(description = "From Datetime, Inclusive. E.g. <b>2023-12-20T13:57:13+05:30</b>")
@@ -61,7 +64,7 @@ class AuditHistoryController {
             @Parameter(description = "Till Datetime, Inclusive. E.g. <b>2023-12-22T13:57:13+05:30</b>")
             @RequestParam(required = false) final OffsetDateTime tillDateTime,
             @ParameterObject @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageRequest) {
-        final Page<AuditEvent> feePage = this.auditHistoryService.getAuditHistory(collectionName, type,
+        final Page<AuditEvent> feePage = this.auditHistoryService.getAuditHistory(collectionName, type, revisions,
                 actor, fromDateTime, tillDateTime, pageRequest);
         return PaginatedResourceAssembler.assemble(feePage);
     }
