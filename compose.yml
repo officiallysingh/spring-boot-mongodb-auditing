@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  mongodb:
+  mongo:
     image: mongo:latest
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
@@ -15,14 +15,14 @@ services:
       start_period: 0s
       retries: 30
     volumes:
-      - "mongodb_data:/data/db"
-      - "mongodb_config:/data/configdb"
+      - "mongo_data:/data/db"
+      - "mongo_config:/data/configdb"
     networks:
       - mynetwork
 
 volumes:
-  mongodb_data:
-  mongodb_config:
+  mongo_data:
+  mongo_config:
 
 networks:
   mynetwork:

@@ -35,6 +35,10 @@ spring:
       auto-index-creation: true
       uuid-representation: standard
 
+  docker:
+    compose:
+      enabled: false
+
   messages:
     basename: i18n/messages,i18n/errors,i18n/problems
     cache-duration: PT10S # 10 second, see the ISO 8601 standard
@@ -52,6 +56,9 @@ spring:
         queue-capacity: 10000
         keep-alive: "10s"
   jackson:
+    format:
+      date-time: iso
+    time-zone: IST
     serialization:
       write-dates-with-zone-id: true
       write-dates-as-timestamps: false
@@ -126,9 +133,9 @@ debug: false
 
 application:
   mongodb:
-    #        entity-base-packages:
-    #            - com.ksoot
+    entity-base-packages:
+#        - com.ksoot
     auditing:
       enabled: true
-#            prefix:
-#            suffix: _aud
+#      prefix:
+#      suffix: _aud
