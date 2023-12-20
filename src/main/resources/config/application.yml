@@ -133,8 +133,8 @@ debug: false
 
 application:
   mongodb:
-    entity-base-packages:
-#        - com.ksoot
+#    entity-base-packages:
+    #        - com.ksoot
     auditing:
       enabled: true
 #      prefix:

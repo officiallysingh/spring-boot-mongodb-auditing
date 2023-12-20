@@ -13,8 +13,8 @@ problem:
   cause-chains-enabled: false
 
 #server:
-#  port: 8080
-    #servlet:
+  #  port: 8080
+  #servlet:
   #context-path:
 
 logging:
@@ -29,9 +29,9 @@ logging:
     ROOT: info
 debug: false
 
-# ===================================================================
-# Application specific properties
-# Add your own application properties here
-# ===================================================================
+  # ===================================================================
+  # Application specific properties
+  # Add your own application properties here
+  # ===================================================================
 
         

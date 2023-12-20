@@ -16,12 +16,14 @@ import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
-import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @EnableConfigurationProperties({MongoProperties.class, MongoAuditProperties.class})
 @Configuration
@@ -80,11 +82,6 @@ class MongoDBConfig extends AbstractMongoClientConfiguration {
         converters.add(new OffsetDateTimeReadConverter());
         converters.add(new OffsetDateTimeWriteConverter());
         return new MongoCustomConversions(converters);
-    }
-
-    @Bean
-    Map<String, String> auditMetaData() {
-        return new ConcurrentReferenceHashMap<>();
     }
 
     @ReadingConverter

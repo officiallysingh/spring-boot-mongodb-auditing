@@ -15,23 +15,8 @@ import java.util.List;
  */
 public class IdentityHelper {
 
-    public enum ClaimName {
-
-        // @formatter:off
-    SUBJECT("preferred_username"),
-    CLIENT_ID("clientId"),
-    CLIENT_NAME("client_name");
-    // @formatter:on
-
-        private final String value;
-
-        private ClaimName(final String value) {
-            this.value = value;
-        }
-
-        public String value() {
-            return this.value;
-        }
+    private IdentityHelper() {
+        throw new IllegalStateException("Just a utility class, not supposed to be instantiated");
     }
 
     public static Authentication getAuthentication() {
@@ -82,7 +67,22 @@ public class IdentityHelper {
         }
     }
 
-    private IdentityHelper() {
-        throw new IllegalStateException("Just a utility class, not supposed to be instantiated");
+    public enum ClaimName {
+
+        // @formatter:off
+    SUBJECT("preferred_username"),
+    CLIENT_ID("clientId"),
+    CLIENT_NAME("client_name");
+    // @formatter:on
+
+        private final String value;
+
+        private ClaimName(final String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return this.value;
+        }
     }
 }

@@ -32,15 +32,12 @@ import static org.springframework.data.mongodb.core.query.SerializationUtils.ser
 public class MongoAuditListener implements InitializingBean {
 
     private static final Query EMPTY_QUERY = new Query();
-    private final MongoAuditProperties mongoAuditProperties;
-
-    private final MongoOperations mongoOperations;
-
-    private final Map<String, String> auditMetaData;
-
     private static final Supplier<String> auditUserSupplier = IdentityHelper::getAuditUserId;
+    private final MongoAuditProperties mongoAuditProperties;
+    private final MongoOperations mongoOperations;
+    private final AuditMetaData auditMetaData;
 
-    @EventListener(condition = "@auditMetaData.containsKey(#event.getCollectionName())")
+    @EventListener(condition = "@auditMetaData.isPresent(#event.getCollectionName())")
     public void onAfterSave(final AfterSaveEvent<?> event) {
         if (log.isDebugEnabled()) {
             log.debug(
@@ -54,7 +51,7 @@ public class MongoAuditListener implements InitializingBean {
     private AuditEvent createAuditEntryOnAfterSave(
             final AfterSaveEvent<?> event, final int attempt) {
         if (this.validateTransaction()) {
-            String auditCollectionName = this.auditMetaData.get(event.getCollectionName());
+            String auditCollectionName = this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
                 final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, auditUserSupplier);
@@ -77,7 +74,7 @@ public class MongoAuditListener implements InitializingBean {
         }
     }
 
-    @EventListener(condition = "@auditMetaData.containsKey(#event.getCollectionName())")
+    @EventListener(condition = "@auditMetaData.isPresent(#event.getCollectionName())")
     public void onAfterDelete(final AfterDeleteEvent<?> event) {
         if (log.isDebugEnabled()) {
             log.debug(
@@ -91,7 +88,7 @@ public class MongoAuditListener implements InitializingBean {
     private AuditEvent createAuditEntryOnAfterDelete(
             final AfterDeleteEvent<?> event, final int attempt) {
         if (this.validateTransaction()) {
-            String auditCollectionName = this.auditMetaData.get(event.getCollectionName());
+            String auditCollectionName = this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
                 final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision, auditUserSupplier);

@@ -1,6 +1,9 @@
 package com.ksoot.product.adapter.repository;
 
 import com.ksoot.mongodb.AuditEvent;
+import com.ksoot.mongodb.AuditMetaData;
+import com.ksoot.problem.core.Problems;
+import com.ksoot.product.util.AppErrors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class AuditHistoryRepository {
 
     private final MongoOperations mongoOperations;
 
-    private final Map<String, String> auditMetaData;
+    private final AuditMetaData auditMetaData;
 
     public Page<AuditEvent> getAuditHistory(final String collectionName,
                                             final AuditEvent.Type type,
@@ -31,8 +33,11 @@ public class AuditHistoryRepository {
                                             final OffsetDateTime fromDateTime,
                                             final OffsetDateTime tillDateTime,
                                             final Pageable pageRequest) {
+        if(!this.auditMetaData.isPresent(collectionName)) {
+            throw Problems.newInstance(AppErrors.AUDIT_COLLECTION_NOT_FOUND).detailArgs(collectionName).throwAble();
+        }
 
-        String auditCollectionName = this.auditMetaData.get(collectionName);
+        String auditCollectionName = this.auditMetaData.getAuditCollection(collectionName).get();
         final Query query = new Query();
 //        if (StringUtils.isNotBlank(collectionName)) {
 //            query.addCriteria(Criteria.where("collectionName").is(collectionName));
@@ -49,9 +54,9 @@ public class AuditHistoryRepository {
                             .gte(fromDateTime)
                             .andOperator(Criteria.where("datetime").lte(tillDateTime)));
         } else if (Objects.nonNull(fromDateTime)) {
-            query.addCriteria(Criteria.where("datetime").is(fromDateTime));
+            query.addCriteria(Criteria.where("datetime").gte(fromDateTime));
         } else if (Objects.nonNull(tillDateTime)) {
-            query.addCriteria(Criteria.where("datetime").is(tillDateTime));
+            query.addCriteria(Criteria.where("datetime").lte(tillDateTime));
         }
         final long totalRecords = this.mongoOperations.count(query, auditCollectionName);
         if (totalRecords == 0) {
