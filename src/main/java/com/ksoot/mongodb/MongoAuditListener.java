@@ -1,5 +1,6 @@
 package com.ksoot.mongodb;
 
+import com.ksoot.common.CommonConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,12 +17,12 @@ import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static org.springframework.data.mongodb.core.query.SerializationUtils.serializeToJsonSafely;
 
@@ -32,9 +33,11 @@ import static org.springframework.data.mongodb.core.query.SerializationUtils.ser
 public class MongoAuditListener implements InitializingBean {
 
     private static final Query EMPTY_QUERY = new Query();
-    private static final Supplier<String> auditUserSupplier = IdentityHelper::getAuditUserId;
+
     private final MongoAuditProperties mongoAuditProperties;
+
     private final MongoOperations mongoOperations;
+
     private final AuditMetaData auditMetaData;
 
     @EventListener(condition = "@auditMetaData.isPresent(#event.getCollectionName())")
@@ -54,7 +57,7 @@ public class MongoAuditListener implements InitializingBean {
             String auditCollectionName = this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, auditUserSupplier);
+                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, this.getAuditUserName());
                 return this.mongoOperations.insert(auditEvent, auditCollectionName);
             } catch (final DuplicateKeyException exception) {
                 if (attempt > 2) { // Max three attempts
@@ -91,7 +94,7 @@ public class MongoAuditListener implements InitializingBean {
             String auditCollectionName = this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-                final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision, auditUserSupplier);
+                final AuditEvent auditEvent = AuditEvent.ofDeleteEvent(event, revision, this.getAuditUserName());
                 return this.mongoOperations.insert(auditEvent, auditCollectionName);
             } catch (final DuplicateKeyException exception) {
                 if (attempt > 2) { // Max three attempts
@@ -114,6 +117,11 @@ public class MongoAuditListener implements InitializingBean {
     private boolean validateTransaction() {
         return TransactionSynchronizationManager.isActualTransactionActive()
                 || this.mongoAuditProperties.getAuditing().isWithoutTransaction();
+    }
+
+    private String getAuditUserName() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(Authentication::getName).orElse(CommonConstants.SYSTEM_USER);
     }
 
     @Override

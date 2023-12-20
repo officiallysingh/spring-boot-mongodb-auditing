@@ -33,7 +33,7 @@ public class AuditHistoryRepository {
                                             final OffsetDateTime fromDateTime,
                                             final OffsetDateTime tillDateTime,
                                             final Pageable pageRequest) {
-        if(!this.auditMetaData.isPresent(collectionName)) {
+        if (!this.auditMetaData.isPresent(collectionName)) {
             throw Problems.newInstance(AppErrors.AUDIT_COLLECTION_NOT_FOUND).detailArgs(collectionName).throwAble();
         }
 
