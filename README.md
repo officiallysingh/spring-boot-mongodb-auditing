@@ -4,5 +4,5 @@
 
 ./gradlew --stop
 
-TBD
+Documentation to be updated soon
 
