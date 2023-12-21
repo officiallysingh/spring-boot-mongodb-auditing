@@ -29,9 +29,9 @@ logging:
     ROOT: info
 debug: false
 
-  # ===================================================================
-  # Application specific properties
-  # Add your own application properties here
-  # ===================================================================
+# ===================================================================
+# Application specific properties
+# Add your own application properties here
+# ===================================================================
 
         
