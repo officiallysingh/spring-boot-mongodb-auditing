@@ -1,4 +1,4 @@
-package com.ksoot.product.util;
+package com.ksoot.product.domain;
 
 import com.ksoot.problem.core.ErrorType;
 import lombok.Getter;

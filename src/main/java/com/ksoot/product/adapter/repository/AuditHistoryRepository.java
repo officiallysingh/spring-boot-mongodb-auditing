@@ -3,7 +3,7 @@ package com.ksoot.product.adapter.repository;
 import com.ksoot.mongodb.AuditEvent;
 import com.ksoot.mongodb.AuditMetaData;
 import com.ksoot.problem.core.Problems;
-import com.ksoot.product.util.AppErrors;
+import com.ksoot.product.domain.AppErrors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
