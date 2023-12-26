@@ -24,7 +24,6 @@ logging:
   file:
     path: logs
     name: ${logging.file.path}/application.log
-    clean-history-on-start: true
   level:
     ROOT: info
 debug: false

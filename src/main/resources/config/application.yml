@@ -67,7 +67,6 @@ spring:
       matching-strategy: ant-path-matcher
     problemdetails:
       enabled: false
-    throw-exception-if-no-handler-found: true
   threads:
     virtual:
       enabled: true
