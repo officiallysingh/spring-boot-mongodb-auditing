@@ -66,6 +66,8 @@ In absence of version field `type` attribute of Audit record will be `UPDATED` f
 But If required `application.mongodb.auditing.without-transaction` can be set to `true` then Auditing will be done without Transactions.
 * It is recommended to use `OffsetDateTime` or `ZonedDateTime` for `datetime` attribute of Audit record to avoid any timezone related issues. 
 Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java).
+* **Audit history is logged as follows.**
+![Audit Date](https://github.com/officiallysingh/spring-boot-mongodb-auditing/blob/main/Audit%20data.png)
 
 ## Usage
 
@@ -146,8 +148,5 @@ curl -X 'GET' \
   'http://localhost:8080/v1/audit-history?collectionName=products&page=0&size=16' \
   -H 'accept: */*'
 ```
-
-Audit history is logged as follows.
-![Audit Date](https://github.com/officiallysingh/spring-boot-mongodb-auditing/blob/main/Audit%20data.png)
 
 # Spring Data MongoDB Text search
