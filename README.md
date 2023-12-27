@@ -175,12 +175,12 @@ MongoDB provides a text search feature that allows to search for documents that 
 ## Implementation
 
 ### Entity
-The candidate fields for text search should be annotated with `@TextIndexed` as defined in 
+* **TextIndexed**: The candidate fields for text search should be annotated with `@TextIndexed` as defined in 
 [**`Product`**](src/main/java/com/ksoot/product/domain/model/Product.java) entity class as follows.
 `@TextIndexed` marks a field to be part of the text index. `weight` attribute defines the significance of the filed relative to other indexed fields. 
 The value directly influences the documents score.
 As there can be only one text index per collection all fields marked with `@TextIndexed` are combined into one single index.
-A field marked with `@TextScore` is also required, to map the text score that MongoDB assigns to documents during a text search. 
+* **TextScore**: A field marked with `@TextScore` is also required, to map the text score that MongoDB assigns to documents during a text search. 
 The text score represents the relevance of a document to a given text search query.
 ```java
 @Document(collection = "products")
