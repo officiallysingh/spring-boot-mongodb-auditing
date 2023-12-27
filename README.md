@@ -15,7 +15,7 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
   and prepare Audit metadata for each collection such as Version field name, Audit collection name, etc. 
   Then it listens to eligible Entity object changes and creates Audit records.
 * [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java) is custom configuration class for MongoDB.
-* [**`AuditEvent`**](src/main/java/com/ksoot/mongodb/AuditEvent.java) is template for Audit records. It defines following fields
+* [**`AuditEvent`**](src/main/java/com/ksoot/mongodb/AuditEvent.java) is class to persist and retrieve Audit records. It defines following fields
   * **`id`** - Unique identifier for Audit record.
   * **`datetime`** - `OffsetDateTime` when the change happened.
   * **`actor`** - Audit Username if available in `SecurityContextHolder`, otherwise it will be set as `SYSTEM`.
@@ -80,14 +80,14 @@ public void onAfterDelete(final AfterDeleteEvent<?> event) {
     
 }
 ```
-* The Audit Username is fetched from `SecurityContextHolder` if available, otherwise it will be set as `SYSTEM`.
+* The Audit Username is retrieved from `SecurityContextHolder` if available, otherwise it will be set as `SYSTEM`.
 * It is highly recommended to put the CRUD operation in a **Transaction** using Spring's `@Transactional` 
-(Refer to [**`Service`**](src/main/java/com/ksoot/product/domain/service/ProductServiceImpl.java)) to have source collection updated and audit entry creation atomically.
+(Refer to [**`Service`**](src/main/java/com/ksoot/product/domain/service/ProductServiceImpl.java)) to update source collection and create audit entry atomically.
 But If required `application.mongodb.auditing.without-transaction` can be set to `true` then Auditing will be done without Transactions.
 * It is recommended to use `OffsetDateTime` or `ZonedDateTime` for `datetime` attribute of Audit record to avoid any timezone related issues. 
 Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java).
 * **Audit history is logged as follows.**
-![Audit Date](https://github.com/officiallysingh/spring-boot-mongodb-auditing/blob/main/Audit%20data.png)
+![Audit Date](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Za4HF7HRYvYLrHLxiE6g0Q.png)
 
 ## Usage
 You can copy the classes from [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package to your project and use them as it is 
@@ -159,17 +159,17 @@ curl -X 'DELETE' \
 ```
 
 * Access Audit History APIs at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Audit to fetch Audit history of any Product.
-Records can be filtered by Collection Name, Audit event type, Revision, Audit Username, Revisions and Datetime range.
+Records can be filtered by _Collection Name_, _Audit event type_, _Revisions_, _Audit Username_ and _Datetime range_.
 ```curl
 curl -X 'GET' \
   'http://localhost:8080/v1/audit-history?collectionName=products&page=0&size=16' \
   -H 'accept: */*'
 ```
 
-# Spring Data MongoDB Text search
+# Spring Data MongoDB Full-Text search
 
 ## Introduction
-text search refers to the ability to perform [**Full-text searches**](https://docs.spring.io/spring-data/mongodb/docs/current-SNAPSHOT/reference/html/#mongodb.repositories.queries.full-text) on string content in your documents. 
+Text search refers to the ability to perform [**Full-text searches**](https://docs.spring.io/spring-data/mongodb/docs/current-SNAPSHOT/reference/html/#mongodb.repositories.queries.full-text) on string content in your documents. 
 MongoDB provides a text search feature that allows to search for documents that contain a specified sequence of words or phrases.
 
 ## Implementation
@@ -231,7 +231,7 @@ public Page<Product> findPage(final List<String> phrases, final Pageable pageReq
 ```
 
 ### API
-* Access Demo Full-text search API at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Product to search for Products.
+Access Demo Full-text search API at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Product to search for Products.
 ```curl
 curl -X 'GET' \
   'http://localhost:8080/v1/products?phrases=mobile&page=0&size=16' \
@@ -242,4 +242,4 @@ curl -X 'GET' \
 [**Rajveer Singh**](https://www.linkedin.com/in/rajveer-singh-589b3950/), In case you find any issues or need any support, please email me at raj14.1984@gmail.com
 
 ## References
-For exception handling refer to [**pring-boot-problem-handler**](https://github.com/officiallysingh/spring-boot-problem-handler)
+For exception handling refer to [**spring-boot-problem-handler**](https://github.com/officiallysingh/spring-boot-problem-handler)
