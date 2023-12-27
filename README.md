@@ -64,7 +64,8 @@ prefixed and suffixed with values defined in `application.mongodb.auditing.prefi
 It expects a `Long` version field to differentiates between newly created records and already existing updated record. 
 In absence of version field `type` attribute of Audit record will be `UPDATED` for newly created and updated records as well.
 * The Audit Username is fetched from `SecurityContextHolder` if available, otherwise it will be set as `SYSTEM`.
-* It is highly recommended to put the CRUD operation in a **Transaction** to have source collection updated and audit entry atomically.
+* It is highly recommended to put the CRUD operation in a **Transaction** using Spring `@Transactional` 
+(Refer to [**`Service`**](src/main/java/com/ksoot/product/domain/service/ProductServiceImpl.java)) to have source collection updated and audit entry creation atomically.
 But If required `application.mongodb.auditing.without-transaction` can be set to `true` then Auditing will be done without Transactions.
 * It is recommended to use `OffsetDateTime` or `ZonedDateTime` for `datetime` attribute of Audit record to avoid any timezone related issues. 
 Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java).
