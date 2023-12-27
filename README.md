@@ -12,7 +12,7 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
   The entity classes not annotated with `Auditable` will not be audited.
 * [**`AuditingMongoEventListener`**](src/main/java/com/ksoot/mongodb/AuditingMongoEventListener.java) is the main class
   responsible for auditing. While application startup it finds all collections enabled for Auditing and creates Audit collections for same 
-  and prepare Audit metadata for each collection such as Version fields name, Audit collection name, etc. 
+  and prepare Audit metadata for each collection such as Version field name, Audit collection name, etc. 
   Then it listens to eligible Entity object changes and creates Audit records.
 * [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java) is custom configuration class for MongoDB.
 * [**`AuditEvent`**](src/main/java/com/ksoot/mongodb/AuditEvent.java) is template for Audit records. It defines following fields
@@ -63,6 +63,22 @@ prefixed and suffixed with values defined in `application.mongodb.auditing.prefi
 * It is recommended to use a version field annotated with `@Version` in entity classes to avoid concurrent updates. 
 It expects a `Long` version field to differentiates between newly created records and already existing updated record. 
 In absence of version field `type` attribute of Audit record will be `UPDATED` for newly created and updated records as well.
+* Eligible Entity class object's changes are detected in listeners defined in [**`AuditingMongoEventListener`**](src/main/java/com/ksoot/mongodb/AuditingMongoEventListener.java)
+and Audit records are created as per the change type.
+On creation or updation of Entity objects
+```java
+@EventListener(condition = "@auditMetaData.isPresent(#event.getCollectionName())")
+public void onAfterSave(final AfterSaveEvent<?> event) {
+  
+}
+```
+On deletion of Entity objects
+```java
+@EventListener(condition = "@auditMetaData.isPresent(#event.getCollectionName())")
+public void onAfterDelete(final AfterDeleteEvent<?> event) {
+    
+}
+```
 * The Audit Username is fetched from `SecurityContextHolder` if available, otherwise it will be set as `SYSTEM`.
 * It is highly recommended to put the CRUD operation in a **Transaction** using Spring's `@Transactional` 
 (Refer to [**`Service`**](src/main/java/com/ksoot/product/domain/service/ProductServiceImpl.java)) to have source collection updated and audit entry creation atomically.
