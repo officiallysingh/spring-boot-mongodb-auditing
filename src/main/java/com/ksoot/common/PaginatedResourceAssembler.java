@@ -1,5 +1,9 @@
 package com.ksoot.common;
 
+import static org.springframework.web.util.UriComponentsBuilder.fromUri;
+
+import java.util.List;
+import java.util.function.Function;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,11 +19,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
-import java.util.function.Function;
-
-import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 public class PaginatedResourceAssembler {
 

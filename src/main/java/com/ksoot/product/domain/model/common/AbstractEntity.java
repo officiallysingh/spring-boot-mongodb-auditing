@@ -1,4 +1,4 @@
-package com.ksoot.mongodb;
+package com.ksoot.product.domain.model.common;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -11,19 +11,17 @@ import org.springframework.data.annotation.Version;
 @EqualsAndHashCode(of = "id")
 public abstract class AbstractEntity implements Identifiable<String>, Versionable<Long> {
 
-    @Id
-    protected String id;
+  @Id protected String id;
 
-    @Version
-    protected Long version;
+  @Version protected Long version;
 
-    @Override
-    public String getId() {
-        return this.id;
-    }
+  @Override
+  public String getId() {
+    return this.id;
+  }
 
-    @Override
-    public Long getVersion() {
-        return this.version;
-    }
+  @Override
+  public Long getVersion() {
+    return this.version;
+  }
 }

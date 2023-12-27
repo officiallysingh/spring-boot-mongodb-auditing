@@ -1,5 +1,9 @@
 package com.ksoot.product.adapter.controller;
 
+import static com.ksoot.common.ApiConstants.*;
+import static com.ksoot.common.ApiStatus.*;
+import static com.ksoot.common.CommonConstants.DEFAULT_PAGE_SIZE;
+
 import com.ksoot.common.APIResponse;
 import com.ksoot.common.Api;
 import com.ksoot.common.PaginatedResource;
@@ -14,18 +18,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.ksoot.common.ApiConstants.*;
-import static com.ksoot.common.ApiStatus.*;
-import static com.ksoot.common.CommonConstants.DEFAULT_PAGE_SIZE;
 
 @RequestMapping("/v1/products")
 @Tag(name = "Product", description = "management APIs")

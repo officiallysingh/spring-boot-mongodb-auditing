@@ -1,7 +1,6 @@
 package com.ksoot.config;
 
 import com.ksoot.common.CommonConstants;
-
 import java.util.List;
 
 public class ActuatorUtils {

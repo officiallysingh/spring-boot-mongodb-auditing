@@ -5,8 +5,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ApiConstants {
 
-    public static final String RECORD_CREATED_RESPONSE =
-            """
+  public static final String RECORD_CREATED_RESPONSE =
+      """
                     {
                         "messages": [
                             "Record created successfully"
@@ -14,8 +14,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String RECORD_UPDATED_RESPONSE =
-            """
+  public static final String RECORD_UPDATED_RESPONSE =
+      """
                     {
                         "messages": [
                             "Record updated successfully"
@@ -23,8 +23,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String RECORD_DELETED_RESPONSE =
-            """
+  public static final String RECORD_DELETED_RESPONSE =
+      """
                     {
                         "messages": [
                             "Record deleted successfully"
@@ -32,8 +32,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String BAD_REQUEST_EXAMPLE_RESPONSE =
-            """
+  public static final String BAD_REQUEST_EXAMPLE_RESPONSE =
+      """
                     {
                         "type": "about:blank",
                         "code": "constraint-violations",
@@ -58,8 +58,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String UNAUTHORIZED_EXAMPLE_RESPONSE =
-            """
+  public static final String UNAUTHORIZED_EXAMPLE_RESPONSE =
+      """
                     {
                         "type": "about:blank",
                         "code": "401",
@@ -72,8 +72,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String FORBIDDEN_EXAMPLE_RESPONSE =
-            """
+  public static final String FORBIDDEN_EXAMPLE_RESPONSE =
+      """
                     {
                         "type": "about:blank",
                         "timestamp": "2023-09-28T22:40:28.480729+05:30",
@@ -86,8 +86,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String NOT_FOUND_EXAMPLE_RESPONSE =
-            """
+  public static final String NOT_FOUND_EXAMPLE_RESPONSE =
+      """
                     {
                         "type": "about:blank",
                         "code": "404",
@@ -100,8 +100,8 @@ public class ApiConstants {
                     }
                     """;
 
-    public static final String INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE =
-            """
+  public static final String INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE =
+      """
                     {
                         "type": "about:blank",
                         "code": "XYZ-123",

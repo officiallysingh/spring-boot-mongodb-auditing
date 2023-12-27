@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,61 +19,84 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE, onConstructor = @__(@PersistenceCreator))
 @Valid
 @Immutable
-public class AuditEvent implements Identifiable<String> {
+public class AuditEvent {
 
-    @Id
-    @Field(name = "_id")
-    private String id;
+  @Id
+  @Field(name = "_id")
+  private String id;
 
-    @NotNull
-    @PastOrPresent
-    @Field(name = "datetime")
-    private OffsetDateTime datetime;
+  @NotNull
+  @PastOrPresent
+  @Field(name = "datetime")
+  private OffsetDateTime datetime;
 
-    @NotEmpty
-    @Field(name = "actor")
-    private String actor;
+  @NotEmpty
+  @Field(name = "actor")
+  private String actor;
 
-    @NotNull
-    @Positive
-    @Field(name = "revision")
-    private Long revision;
+  @NotNull
+  @Positive
+  @Field(name = "revision")
+  private Long revision;
 
-    @NotNull
-    @Field(name = "type")
-    private Type type;
+  @NotNull
+  @Field(name = "type")
+  private Type type;
 
-    @NotEmpty
-    @Field(name = "collectionName")
-    private String collectionName;
+  @NotEmpty
+  @Field(name = "collectionName")
+  private String collectionName;
 
-    @NotNull
-    @Field(name = "source")
-    private Document source;
+  @NotNull
+  @Field(name = "source")
+  private Document source;
 
-    public static AuditEvent of(final Type type, final Long timestamp, final Long revision, final String collectionName,
-                                final Document source, final String auditUserName) {
-        return new AuditEvent(null, Instant.ofEpochMilli(timestamp).atOffset(DateTimeUtils.SYSTEM_OFFSET_ID), auditUserName,
-                revision, type, collectionName, source);
-    }
+  public static AuditEvent of(
+      final Type type,
+      final Long timestamp,
+      final Long revision,
+      final String collectionName,
+      final Document source,
+      final String auditUserName) {
+    return new AuditEvent(
+        null,
+        Instant.ofEpochMilli(timestamp).atOffset(DateTimeUtils.SYSTEM_OFFSET_ID),
+        auditUserName,
+        revision,
+        type,
+        collectionName,
+        source);
+  }
 
-    public static AuditEvent ofSaveEvent(final AfterSaveEvent<?> event, final Long revision, final String auditUserName) {
-        return of(revision == 1 ? Type.CREATED : Type.UPDATED, event.getTimestamp(), revision,
-                event.getCollectionName(), event.getDocument(), auditUserName);
-    }
+  public static AuditEvent ofSaveEvent(
+      final AfterSaveEvent<?> event, final Long revision, final String auditUserName) {
+    return of(
+        revision == 1 ? Type.CREATED : Type.UPDATED,
+        event.getTimestamp(),
+        revision,
+        event.getCollectionName(),
+        event.getDocument(),
+        auditUserName);
+  }
 
-    public static AuditEvent ofDeleteEvent(final AfterDeleteEvent<?> event, final Long revision, final String auditUserName) {
-        return of(Type.DELETED, event.getTimestamp(), revision, event.getCollectionName(), event.getDocument(), auditUserName);
-    }
+  public static AuditEvent ofDeleteEvent(
+      final AfterDeleteEvent<?> event, final Long revision, final String auditUserName) {
+    return of(
+        Type.DELETED,
+        event.getTimestamp(),
+        revision,
+        event.getCollectionName(),
+        event.getDocument(),
+        auditUserName);
+  }
 
-    public enum Type {
-        CREATED, UPDATED, DELETED;
-    }
+  public enum Type {
+    CREATED,
+    UPDATED,
+    DELETED
+  }
 }

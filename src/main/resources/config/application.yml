@@ -25,7 +25,6 @@ spring:
       - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
       - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
-      - org.springframework.cloud.openfeign.hateoas.FeignHalAutoConfiguration
 
   #------------------------- MongoDB configuration -------------------------
   data:

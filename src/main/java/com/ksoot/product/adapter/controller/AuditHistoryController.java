@@ -1,5 +1,8 @@
 package com.ksoot.product.adapter.controller;
 
+import static com.ksoot.common.ApiConstants.INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE;
+import static com.ksoot.common.CommonConstants.DEFAULT_PAGE_SIZE;
+
 import com.ksoot.common.PaginatedResource;
 import com.ksoot.common.PaginatedResourceAssembler;
 import com.ksoot.mongodb.AuditEvent;
@@ -11,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -20,12 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-
-import static com.ksoot.common.ApiConstants.INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE;
-import static com.ksoot.common.CommonConstants.DEFAULT_PAGE_SIZE;
 
 @RestController
 @RequestMapping("/v1/audit-history")

@@ -1,14 +1,13 @@
 package com.ksoot.mongodb;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
 
 /**
  * @author Rajveer Singh

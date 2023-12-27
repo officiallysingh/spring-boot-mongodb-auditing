@@ -1,6 +1,9 @@
 package com.ksoot.mongodb;
 
+import static org.springframework.data.mongodb.core.query.SerializationUtils.serializeToJsonSafely;
+
 import com.ksoot.common.CommonConstants;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
-
-import java.util.Optional;
-
-import static org.springframework.data.mongodb.core.query.SerializationUtils.serializeToJsonSafely;
 
 @Configuration
 @ConditionalOnProperty(prefix = "application.mongodb.auditing", name = "enabled", havingValue = "true")

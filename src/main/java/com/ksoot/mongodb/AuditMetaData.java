@@ -1,15 +1,14 @@
 package com.ksoot.mongodb;
 
-import org.springframework.stereotype.Component;
-import org.springframework.util.ConcurrentReferenceHashMap;
-
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
 @Component
 public class AuditMetaData {
 
-    private Map<String, String> auditCollections;
+    private final Map<String, String> auditCollections;
 
     AuditMetaData() {
         this.auditCollections = new ConcurrentReferenceHashMap<>();

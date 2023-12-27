@@ -1,9 +1,8 @@
 package com.ksoot.config;
 
+import java.util.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.Environment;
-
-import java.util.*;
 
 public class SpringProfiles {
 

@@ -7,13 +7,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.*;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.util.Assert;
-
-import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"messages", "warnings", "errorCount", "errors"})
@@ -62,7 +61,7 @@ public class APIResponse<T> {
 
     public static <T> APIResponse<T> of(final T error) {
         Assert.notNull(error, "'error' must not be null");
-        return new APIResponse<>(Arrays.asList(error));
+        return new APIResponse<>(List.of(error));
     }
 
     public static <T> APIResponse<T> of(final List<T> errors) {

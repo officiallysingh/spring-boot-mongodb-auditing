@@ -17,45 +17,45 @@ import org.springframework.lang.Nullable;
 
 @Configuration
 @EnableConfigurationProperties(
-        value = {TaskExecutionProperties.class, TaskSchedulingProperties.class})
+    value = {TaskExecutionProperties.class, TaskSchedulingProperties.class})
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class GeneralAutoConfiguration {
 
-    //  @Bean
-    //  ApplicationEventMulticaster applicationEventMulticaster(
-    //      @Qualifier("applicationTaskExecutor") final Executor taskExecutor) {
-    //    SimpleApplicationEventMulticaster eventMulticaster = new
-    // SimpleApplicationEventMulticaster();
-    //    eventMulticaster.setTaskExecutor(taskExecutor);
-    //    return eventMulticaster;
-    //  }
+  //  @Bean
+  //  ApplicationEventMulticaster applicationEventMulticaster(
+  //      @Qualifier("applicationTaskExecutor") final Executor taskExecutor) {
+  //    SimpleApplicationEventMulticaster eventMulticaster = new
+  // SimpleApplicationEventMulticaster();
+  //    eventMulticaster.setTaskExecutor(taskExecutor);
+  //    return eventMulticaster;
+  //  }
 
-    @Bean
-    MessageProvider messageProvider(final MessageSource messageSource) {
-        return new MessageProvider(messageSource);
-    }
+  @Bean
+  MessageProvider messageProvider(final MessageSource messageSource) {
+    return new MessageProvider(messageSource);
+  }
 
-    @Bean
-    SpringProfiles springProfiles(final Environment environment) {
-        return new SpringProfiles(environment);
-    }
+  @Bean
+  SpringProfiles springProfiles(final Environment environment) {
+    return new SpringProfiles(environment);
+  }
 
-    @Bean
-    PaginatedResourceAssembler paginatedResourceAssembler(
-            @Nullable final HateoasPageableHandlerMethodArgumentResolver resolver) {
-        return new PaginatedResourceAssembler(resolver);
-    }
+  @Bean
+  PaginatedResourceAssembler paginatedResourceAssembler(
+      @Nullable final HateoasPageableHandlerMethodArgumentResolver resolver) {
+    return new PaginatedResourceAssembler(resolver);
+  }
 
-    @Bean
-    BeanRegistry defaultBeanRegistry(final ApplicationContext applicationContext) {
-        BeanRegistry beanRegistry = new DefaultBeanRegistry();
-        beanRegistry.setApplicationContext(applicationContext);
-        return beanRegistry;
-    }
+  @Bean
+  BeanRegistry defaultBeanRegistry(final ApplicationContext applicationContext) {
+    BeanRegistry beanRegistry = new DefaultBeanRegistry();
+    beanRegistry.setApplicationContext(applicationContext);
+    return beanRegistry;
+  }
 
-    // @ConditionalOnMissingBean(value = Validator.class)
-    // @Bean
-    // Validator validator() {
-    // return Validation.buildDefaultValidatorFactory().getValidator();
-    // }
+  // @ConditionalOnMissingBean(value = Validator.class)
+  // @Bean
+  // Validator validator() {
+  // return Validation.buildDefaultValidatorFactory().getValidator();
+  // }
 }

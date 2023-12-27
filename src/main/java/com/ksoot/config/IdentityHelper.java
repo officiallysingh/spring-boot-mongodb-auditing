@@ -1,14 +1,13 @@
-package com.ksoot.mongodb;
+package com.ksoot.config;
 
 import com.ksoot.common.CommonConstants;
+import java.security.Principal;
+import java.util.List;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.security.Principal;
-import java.util.List;
 
 /**
  * @author Rajveer Singh
@@ -77,7 +76,7 @@ public class IdentityHelper {
 
         private final String value;
 
-        private ClaimName(final String value) {
+        ClaimName(final String value) {
             this.value = value;
         }
 

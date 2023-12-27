@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface ProductMappers {
 
-    ProductMappers INSTANCE = Mappers.getMapper(ProductMappers.class);
+  ProductMappers INSTANCE = Mappers.getMapper(ProductMappers.class);
 
-    ProductVM productViewModel(final Product product);
+  ProductVM productViewModel(final Product product);
 }

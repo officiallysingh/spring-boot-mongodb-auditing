@@ -1,20 +1,19 @@
 package com.ksoot.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class PaginatedResource<T> implements Iterable<T> {
 
     public static final int HASH_CODE_PRIME_NUM = 31;
     private final Collection<T> content;
 
-    private PaginationData metadata;
+    private final PaginationData metadata;
 
     public PaginatedResource(final Page<T> page) {
         this.content = page.getContent();

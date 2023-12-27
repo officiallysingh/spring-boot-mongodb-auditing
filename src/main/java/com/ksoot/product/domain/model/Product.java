@@ -1,17 +1,16 @@
 package com.ksoot.product.domain.model;
 
-import com.ksoot.mongodb.AbstractEntity;
 import com.ksoot.mongodb.Auditable;
+import com.ksoot.product.domain.model.common.AbstractEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.List;
+import java.util.Map;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.TextScore;
-
-import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter

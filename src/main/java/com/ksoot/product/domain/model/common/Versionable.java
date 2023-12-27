@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.ksoot.mongodb;
+package com.ksoot.product.domain.model.common;
 
 import java.io.Serializable;
 
 /**
- * @param <I> Id type
+ * @param <V> Version type
  * @author Rajveer Singh
  */
-public interface Identifiable<I extends Comparable<I> & Serializable> {
+public interface Versionable<V extends Comparable<V> & Serializable> {
 
-    I getId();
+  V getVersion();
 }

@@ -1,7 +1,5 @@
 package com.ksoot.common;
 
-import lombok.experimental.UtilityClass;
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -11,6 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class DateTimeUtils {
@@ -34,7 +33,6 @@ public class DateTimeUtils {
     public static final ZoneId SYSTEM_ZONE_ID = ZoneId.systemDefault();
 
     public static final ZoneOffset SYSTEM_OFFSET_ID = SYSTEM_ZONE_ID.getRules().getOffset(java.time.Instant.now());
-    ;
 
     public static final String ZONE_DISPALY_NAME =
             SYSTEM_ZONE_ID.getDisplayName(TextStyle.FULL, Locale.getDefault())

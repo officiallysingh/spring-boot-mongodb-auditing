@@ -1,5 +1,9 @@
 package com.ksoot.product.adapter.controller;
 
+import static com.ksoot.common.CommonErrorKeys.EMPTY_UPDATE_REQUEST;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.ksoot.common.APIResponse;
 import com.ksoot.common.GeneralMessageResolver;
 import com.ksoot.common.PaginatedResource;
@@ -12,6 +16,8 @@ import com.ksoot.product.domain.model.dto.ProductUpdationRQ;
 import com.ksoot.product.domain.model.dto.ProductVM;
 import com.ksoot.product.domain.service.ProductService;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.util.List;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,13 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.function.Function;
-
-import static com.ksoot.common.CommonErrorKeys.EMPTY_UPDATE_REQUEST;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequiredArgsConstructor

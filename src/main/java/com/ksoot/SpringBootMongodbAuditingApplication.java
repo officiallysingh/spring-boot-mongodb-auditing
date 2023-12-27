@@ -7,14 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPIDefinition(
-        info =
+    info =
         @Info(
-                title = "CRUD API",
-                version = "0.0.1",
-                description = "Spring Data MongoDB Auditing and Text search API"))
+            title = "CRUD API",
+            version = "0.0.1",
+            description = "Spring Data MongoDB Auditing and Text search API"))
 public class SpringBootMongodbAuditingApplication {
 
-    public static void main(final String[] args) {
-        SpringApplication.run(SpringBootMongodbAuditingApplication.class, args);
-    }
+  public static void main(final String[] args) {
+    SpringApplication.run(SpringBootMongodbAuditingApplication.class, args);
+  }
 }

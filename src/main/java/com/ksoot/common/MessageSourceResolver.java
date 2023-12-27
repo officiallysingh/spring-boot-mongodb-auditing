@@ -1,13 +1,12 @@
 package com.ksoot.common;
 
+import java.io.Serializable;
 import lombok.Builder;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
-import java.io.Serializable;
 
 /**
  * @author Rajveer Singh
@@ -124,11 +123,10 @@ public class MessageSourceResolver implements MessageSourceResolvable, Serializa
      * and default message.
      */
     protected final String resolvableToString() {
-        StringBuilder result = new StringBuilder(64);
-        result.append("codes [").append(StringUtils.arrayToDelimitedString(this.codes, ","));
-        result.append("]; arguments [").append(StringUtils.arrayToDelimitedString(this.arguments, ","));
-        result.append("]; default message [").append(this.defaultMessage).append(']');
-        return result.toString();
+        String result = "codes [" + StringUtils.arrayToDelimitedString(this.codes, ",") +
+                "]; arguments [" + StringUtils.arrayToDelimitedString(this.arguments, ",") +
+                "]; default message [" + this.defaultMessage + ']';
+        return result;
     }
 
     /**
@@ -149,10 +147,9 @@ public class MessageSourceResolver implements MessageSourceResolvable, Serializa
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MessageSourceResolvable)) {
+        if (!(other instanceof MessageSourceResolvable otherResolvable)) {
             return false;
         }
-        MessageSourceResolvable otherResolvable = (MessageSourceResolvable) other;
         return (ObjectUtils.nullSafeEquals(getCodes(), otherResolvable.getCodes())
                 && ObjectUtils.nullSafeEquals(getArguments(), otherResolvable.getArguments())
                 && ObjectUtils.nullSafeEquals(getDefaultMessage(), otherResolvable.getDefaultMessage()));
