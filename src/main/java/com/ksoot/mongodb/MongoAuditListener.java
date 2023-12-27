@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,8 +34,6 @@ import org.springframework.util.Assert;
 @Slf4j
 @RequiredArgsConstructor
 public class MongoAuditListener implements InitializingBean {
-
-  private static final Query EMPTY_QUERY = new Query();
 
   private final MongoAuditProperties mongoAuditProperties;
 
@@ -58,7 +57,8 @@ public class MongoAuditListener implements InitializingBean {
       String auditCollectionName =
           this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
       try {
-        long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
+        Query query = new Query(Criteria.where("collectionName").is(event.getCollectionName()));
+        long revision = this.mongoOperations.count(query, auditCollectionName) + 1;
         final AuditEvent auditEvent =
             AuditEvent.ofSaveEvent(
                 event,
@@ -101,7 +101,8 @@ public class MongoAuditListener implements InitializingBean {
       String auditCollectionName =
           this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
       try {
-        long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
+        Query query = new Query(Criteria.where("collectionName").is(event.getCollectionName()));
+        long revision = this.mongoOperations.count(query, auditCollectionName) + 1;
         final AuditEvent auditEvent =
             AuditEvent.ofDeleteEvent(event, revision, this.getAuditUserName());
         return this.mongoOperations.insert(auditEvent, auditCollectionName);
