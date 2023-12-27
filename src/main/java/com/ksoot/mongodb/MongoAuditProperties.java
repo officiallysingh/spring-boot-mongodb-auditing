@@ -24,6 +24,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Valid
 public class MongoAuditProperties {
 
+  /**
+   * Default: Main class package name. List of packages to scan for MongoDB entities.
+   */
   private List<String> entityBasePackages;
 
   private Auditing auditing = new Auditing();
@@ -34,9 +37,25 @@ public class MongoAuditProperties {
   @ToString
   @Valid
   class Auditing {
+
+    /**
+     * Default: true, Whether or not to enable Auditing.
+     */
     private boolean enabled = false;
+
+    /**
+     * Default: false, Whether or not to do Auditing without Transactions.
+     */
     private boolean withoutTransaction = false;
+
+    /**
+     * Default: "", Audit collection name prefix.
+     */
     private String prefix = "";
+
+    /**
+     * Default: "", Audit collection name suffix.
+     */
     private String suffix = "_aud";
   }
 }

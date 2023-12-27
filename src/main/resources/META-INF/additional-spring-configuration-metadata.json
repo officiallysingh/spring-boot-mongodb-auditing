@@ -1,0 +1,31 @@
+{
+	"properties": [
+		{
+			"name": "application.mongodb.entity-base-packages",
+			"type": "java.lang.String",
+			"description": "Default: Main class package name. List of packages to scan for MongoDB entities."
+		},
+		{
+			"name": "application.mongodb.auditing.enabled",
+			"type": "java.lang.Boolean",
+			"defaultValue": "true",
+			"description": "Default: true, Whether or not to enable Problem Auditing."
+		},
+		{
+			"name": "application.mongodb.auditing.without-transaction",
+			"type": "java.lang.Boolean",
+			"defaultValue": "false",
+			"description": "Default: true, Whether or not to do Auditing without Transactions."
+		},
+		{
+			"name": "application.mongodb.auditing.prefix",
+			"type": "java.lang.String",
+			"description": "Default: \"\", Audit collection name prefix."
+		},
+		{
+			"name": "application.mongodb.auditing.suffix",
+			"type": "java.lang.String",
+			"description": "Default: \"\", Audit collection name suffix."
+		}
+	]
+}

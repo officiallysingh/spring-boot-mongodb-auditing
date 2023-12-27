@@ -133,5 +133,6 @@ application:
 #      - com.ksoot
     auditing:
       enabled: true
+#      without-transaction: false
 #      prefix:
 #      suffix: _aud
