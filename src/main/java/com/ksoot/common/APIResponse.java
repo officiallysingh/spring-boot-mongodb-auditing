@@ -18,176 +18,179 @@ import org.springframework.util.Assert;
 @JsonPropertyOrder({"messages", "warnings", "errorCount", "errors"})
 public class APIResponse<T> {
 
-    private static final Set<String> RESERVED_PROPERTIES =
-            new HashSet<>(Arrays.asList("messages", "warnings", "errorCount", "errors"));
+  private static final Set<String> RESERVED_PROPERTIES =
+      new HashSet<>(Arrays.asList("messages", "warnings", "errorCount", "errors"));
 
-    private final Set<String> messages;
+  private final Set<String> messages;
 
-    private final Set<String> warnings;
-    @Getter
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<T> errors;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final Map<String, Object> values;
-    @Getter
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private Integer errorCount;
+  private final Set<String> warnings;
 
-    private APIResponse(final List<T> errors) {
-        this.messages = Sets.newLinkedHashSet();
-        this.warnings = Sets.newLinkedHashSet();
-        this.errors = errors;
-        this.errorCount = errors.size();
-        this.values = Maps.newLinkedHashMap();
+  @Getter
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private final List<T> errors;
+
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private final Map<String, Object> values;
+
+  @Getter
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private Integer errorCount;
+
+  private APIResponse(final List<T> errors) {
+    this.messages = Sets.newLinkedHashSet();
+    this.warnings = Sets.newLinkedHashSet();
+    this.errors = errors;
+    this.errorCount = errors.size();
+    this.values = Maps.newLinkedHashMap();
+  }
+
+  private APIResponse(final Map<String, Object> values) {
+    this.messages = Sets.newLinkedHashSet();
+    this.warnings = Sets.newLinkedHashSet();
+    this.errors = Lists.newArrayList();
+    this.values = values;
+  }
+
+  private APIResponse() {
+    this.messages = Sets.newLinkedHashSet();
+    this.warnings = Sets.newLinkedHashSet();
+    this.errors = Lists.newArrayList();
+    this.values = Maps.newLinkedHashMap();
+  }
+
+  public static <T> APIResponse<T> newInstance() {
+    return new APIResponse<>();
+  }
+
+  public static <T> APIResponse<T> of(final T error) {
+    Assert.notNull(error, "'error' must not be null");
+    return new APIResponse<>(List.of(error));
+  }
+
+  public static <T> APIResponse<T> of(final List<T> errors) {
+    Assert.notEmpty(errors, "'errors' must not be null or empty");
+    Assert.noNullElements(errors, "'errors' must not be contain null elements");
+    APIResponse<T> apiResponse = newInstance();
+    return apiResponse.addErrors(errors);
+  }
+
+  public static <T> APIResponse<T> of(final String key, final Object value) {
+    Assert.hasText(key, "'key' must not be null or empty");
+    Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
+    Map<String, Object> values = Maps.newLinkedHashMap();
+    values.put(key, value);
+    return new APIResponse<>(values);
+  }
+
+  public static <T> APIResponse<T> of(final Map<String, Object> values) {
+    Assert.notEmpty(values, "'values' must not be null or empty");
+    Map<String, Object> valuesInternal = Maps.newLinkedHashMap();
+    values.forEach(
+        (key, value) -> {
+          Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
+          valuesInternal.put(key, value);
+        });
+    return new APIResponse<>(valuesInternal);
+  }
+
+  @JsonAnyGetter
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  public Map<String, Object> getValues() {
+    if (CollectionUtils.isNotEmpty(this.messages) || CollectionUtils.isNotEmpty(this.warnings)) {
+      Map<String, Object> returnValues = Maps.newLinkedHashMap();
+      if (CollectionUtils.isNotEmpty(this.messages)) {
+        returnValues.put("messages", this.messages);
+      }
+      if (CollectionUtils.isNotEmpty(this.warnings)) {
+        returnValues.put("warnings", this.warnings);
+      }
+      returnValues.putAll(this.values);
+      return returnValues;
+    } else {
+      return Collections.unmodifiableMap(this.values);
     }
+  }
 
-    private APIResponse(final Map<String, Object> values) {
-        this.messages = Sets.newLinkedHashSet();
-        this.warnings = Sets.newLinkedHashSet();
-        this.errors = Lists.newArrayList();
-        this.values = values;
-    }
+  public APIResponse<T> addValue(final String key, final Object value) {
+    Assert.hasText(key, "'key' must not be null or empty");
+    Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
+    this.values.put(key, value);
+    return this;
+  }
 
-    private APIResponse() {
-        this.messages = Sets.newLinkedHashSet();
-        this.warnings = Sets.newLinkedHashSet();
-        this.errors = Lists.newArrayList();
-        this.values = Maps.newLinkedHashMap();
+  public APIResponse<T> addValues(final Map<String, Object> values) {
+    if (MapUtils.isNotEmpty(values)) {
+      values.entrySet().stream().forEach(entry -> this.addValue(entry.getKey(), entry.getValue()));
     }
+    return this;
+  }
 
-    public static <T> APIResponse<T> newInstance() {
-        return new APIResponse<>();
-    }
+  @SuppressWarnings("unchecked")
+  public APIResponse<T> addErrors(final T... errors) {
+    Assert.notEmpty(errors, "'errors' must not be null or empty");
+    Assert.noNullElements(errors, "'errors' must not be not contain null elements");
+    this.errors.addAll(Arrays.asList(errors));
+    this.errorCount += errors.length;
+    return this;
+  }
 
-    public static <T> APIResponse<T> of(final T error) {
-        Assert.notNull(error, "'error' must not be null");
-        return new APIResponse<>(List.of(error));
-    }
+  public APIResponse<T> addErrors(final List<T> errors) {
+    Assert.notEmpty(errors, "'errors' must not be null or empty");
+    Assert.noNullElements(errors, "'errors' must not be not contain null elements");
+    this.errors.addAll(errors);
+    this.errorCount += errors.size();
+    return this;
+  }
 
-    public static <T> APIResponse<T> of(final List<T> errors) {
-        Assert.notEmpty(errors, "'errors' must not be null or empty");
-        Assert.noNullElements(errors, "'errors' must not be contain null elements");
-        APIResponse<T> apiResponse = newInstance();
-        return apiResponse.addErrors(errors);
-    }
+  public APIResponse<T> addMessage(final String... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.messages.addAll(Arrays.asList(message));
+    return this;
+  }
 
-    public static <T> APIResponse<T> of(final String key, final Object value) {
-        Assert.hasText(key, "'key' must not be null or empty");
-        Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
-        Map<String, Object> values = Maps.newLinkedHashMap();
-        values.put(key, value);
-        return new APIResponse<>(values);
-    }
+  public APIResponse<T> addMessage(final MessageResolver... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.messages.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
+    return this;
+  }
 
-    public static <T> APIResponse<T> of(final Map<String, Object> values) {
-        Assert.notEmpty(values, "'values' must not be null or empty");
-        Map<String, Object> valuesInternal = Maps.newLinkedHashMap();
-        values.forEach(
-                (key, value) -> {
-                    Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
-                    valuesInternal.put(key, value);
-                });
-        return new APIResponse<>(valuesInternal);
-    }
+  public APIResponse<T> addMessage(final MessageSourceResolvable... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.messages.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
+    return this;
+  }
 
-    @JsonAnyGetter
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public Map<String, Object> getValues() {
-        if (CollectionUtils.isNotEmpty(this.messages) || CollectionUtils.isNotEmpty(this.warnings)) {
-            Map<String, Object> returnValues = Maps.newLinkedHashMap();
-            if (CollectionUtils.isNotEmpty(this.messages)) {
-                returnValues.put("messages", this.messages);
-            }
-            if (CollectionUtils.isNotEmpty(this.warnings)) {
-                returnValues.put("warnings", this.warnings);
-            }
-            returnValues.putAll(this.values);
-            return returnValues;
-        } else {
-            return Collections.unmodifiableMap(this.values);
-        }
-    }
+  public APIResponse<T> addWarning(final String... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.warnings.addAll(Arrays.asList(message));
+    return this;
+  }
 
-    public APIResponse<T> addValue(final String key, final Object value) {
-        Assert.hasText(key, "'key' must not be null or empty");
-        Assert.isTrue(!RESERVED_PROPERTIES.contains(key), "Property " + key + " is reserved");
-        this.values.put(key, value);
-        return this;
-    }
+  public APIResponse<T> addWarning(final MessageResolver... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.warnings.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
+    return this;
+  }
 
-    public APIResponse<T> addValues(final Map<String, Object> values) {
-        if (MapUtils.isNotEmpty(values)) {
-            values.entrySet().stream().forEach(entry -> this.addValue(entry.getKey(), entry.getValue()));
-        }
-        return this;
-    }
+  public APIResponse<T> addWarning(final MessageSourceResolvable... message) {
+    Assert.notEmpty(message, "'message' must not be null or empty");
+    Assert.noNullElements(message, "'message' must not be not contain null elements");
+    this.warnings.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
+    return this;
+  }
 
-    @SuppressWarnings("unchecked")
-    public APIResponse<T> addErrors(final T... errors) {
-        Assert.notEmpty(errors, "'errors' must not be null or empty");
-        Assert.noNullElements(errors, "'errors' must not be not contain null elements");
-        this.errors.addAll(Arrays.asList(errors));
-        this.errorCount += errors.length;
-        return this;
-    }
+  @JsonIgnore
+  public boolean hasErrors() {
+    return this.errorCount != null && this.errorCount.intValue() != 0;
+  }
 
-    public APIResponse<T> addErrors(final List<T> errors) {
-        Assert.notEmpty(errors, "'errors' must not be null or empty");
-        Assert.noNullElements(errors, "'errors' must not be not contain null elements");
-        this.errors.addAll(errors);
-        this.errorCount += errors.size();
-        return this;
-    }
-
-    public APIResponse<T> addMessage(final String... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.messages.addAll(Arrays.asList(message));
-        return this;
-    }
-
-    public APIResponse<T> addMessage(final MessageResolver... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.messages.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
-        return this;
-    }
-
-    public APIResponse<T> addMessage(final MessageSourceResolvable... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.messages.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
-        return this;
-    }
-
-    public APIResponse<T> addWarning(final String... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.warnings.addAll(Arrays.asList(message));
-        return this;
-    }
-
-    public APIResponse<T> addWarning(final MessageResolver... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.warnings.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
-        return this;
-    }
-
-    public APIResponse<T> addWarning(final MessageSourceResolvable... message) {
-        Assert.notEmpty(message, "'message' must not be null or empty");
-        Assert.noNullElements(message, "'message' must not be not contain null elements");
-        this.warnings.addAll(Arrays.stream(message).map(MessageProvider::getMessage).toList());
-        return this;
-    }
-
-    @JsonIgnore
-    public boolean hasErrors() {
-        return this.errorCount != null && this.errorCount.intValue() != 0;
-    }
-
-    @JsonIgnore
-    public boolean hasData() {
-        return MapUtils.isNotEmpty(this.values);
-    }
+  @JsonIgnore
+  public boolean hasData() {
+    return MapUtils.isNotEmpty(this.values);
+  }
 }

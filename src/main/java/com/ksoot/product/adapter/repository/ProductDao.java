@@ -7,7 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProductDao {
 
-    Page<Product> findPage(
-            final List<String> phrases,
-            final Pageable pageRequest);
+  Page<Product> findPage(final List<String> phrases, final Pageable pageRequest);
 }

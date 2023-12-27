@@ -9,14 +9,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
-    Product createProduct(final ProductCreationRQ request);
+  Product createProduct(final ProductCreationRQ request);
 
-    Product getProductById(final String id);
+  Product getProductById(final String id);
 
-    Page<Product> getProducts(final List<String> phrases,
-                              final Pageable pageRequest);
+  Page<Product> getProducts(final List<String> phrases, final Pageable pageRequest);
 
-    Product updateProduct(final String id, final ProductUpdationRQ request);
+  Product updateProduct(final String id, final ProductUpdationRQ request);
 
-    void deleteProduct(final String id);
+  void deleteProduct(final String id);
 }

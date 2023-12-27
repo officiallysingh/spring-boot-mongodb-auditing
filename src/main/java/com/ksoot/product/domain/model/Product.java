@@ -17,29 +17,30 @@ import org.springframework.data.mongodb.core.mapping.TextScore;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-//@AllArgsConstructor(staticName = "of")
+// @AllArgsConstructor(staticName = "of")
 @Document(collection = "products")
 @TypeAlias("product")
 @Auditable
 public class Product extends AbstractEntity {
 
-    @NotEmpty
-    @Size(min = 2, max = 256)
-    @TextIndexed(weight = 3)
-    private String name;
+  @NotEmpty
+  @Size(min = 2, max = 256)
+  @TextIndexed(weight = 3)
+  private String name;
 
-    @Size(min = 2, max = 256)
-    @TextIndexed(weight = 1)
-    private String description;
+  @Size(min = 2, max = 256)
+  @TextIndexed(weight = 1)
+  private String description;
 
-    @TextIndexed(weight = 2)
-    @Size(max = 5)
-    private List<@NotEmpty @Size(min = 2, max = 10) String> tags;
+  @TextIndexed(weight = 2)
+  @Size(max = 5)
+  private List<@NotEmpty @Size(min = 2, max = 10) String> tags;
 
-    private Map<@NotEmpty @Size(min = 2, max = 50) String, @NotEmpty @Size(min = 2, max = 256) String> attributes;
+  private Map<@NotEmpty @Size(min = 2, max = 50) String, @NotEmpty @Size(min = 2, max = 256) String>
+      attributes;
 
-    @TextScore
-    @Getter(AccessLevel.PACKAGE)
-    @Setter(AccessLevel.PACKAGE)
-    private Float score;
+  @TextScore
+  @Getter(AccessLevel.PACKAGE)
+  @Setter(AccessLevel.PACKAGE)
+  private Float score;
 }

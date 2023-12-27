@@ -32,39 +32,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 class AuditHistoryController {
 
-    private final AuditHistoryService auditHistoryService;
+  private final AuditHistoryService auditHistoryService;
 
-    @GetMapping
-    @Operation(
-            operationId = "get-audit-history",
-            summary = "Gets a page of Audit History")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description =
-                                    "Audit History page returned successfully. Returns an empty page if no records found"),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal Server error",
-                            content = @Content(examples = @ExampleObject(INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE)))
-            })
-    public PaginatedResource<AuditEvent> getProducts(
-            @Parameter(description = "Source MongoDB Collection name. E.g. <b>products</b>", required = true)
-            @RequestParam final String collectionName,
-            @Parameter(description = "Audit Event type.")
-            @RequestParam(required = false) final AuditEvent.Type type,
-            @Parameter(description = "Audit Revisions.")
-            @RequestParam(required = false) final List<Long> revisions,
-            @Parameter(description = "Audit Username. E.g. <b>SYSTEM</b>")
-            @RequestParam(required = false) final String actor,
-            @Parameter(description = "From Datetime, Inclusive. E.g. <b>2023-12-20T13:57:13+05:30</b>")
-            @RequestParam(required = false) final OffsetDateTime fromDateTime,
-            @Parameter(description = "Till Datetime, Inclusive. E.g. <b>2023-12-22T13:57:13+05:30</b>")
-            @RequestParam(required = false) final OffsetDateTime tillDateTime,
-            @ParameterObject @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageRequest) {
-        final Page<AuditEvent> feePage = this.auditHistoryService.getAuditHistory(collectionName, type, revisions,
-                actor, fromDateTime, tillDateTime, pageRequest);
-        return PaginatedResourceAssembler.assemble(feePage);
-    }
+  @GetMapping
+  @Operation(operationId = "get-audit-history", summary = "Gets a page of Audit History")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description =
+                "Audit History page returned successfully. Returns an empty page if no records found"),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server error",
+            content = @Content(examples = @ExampleObject(INTERNAL_SERVER_ERROR_EXAMPLE_RESPONSE)))
+      })
+  public PaginatedResource<AuditEvent> getProducts(
+      @Parameter(
+              description = "Source MongoDB Collection name. E.g. <b>products</b>",
+              required = true)
+          @RequestParam
+          final String collectionName,
+      @Parameter(description = "Audit Event type.") @RequestParam(required = false)
+          final AuditEvent.Type type,
+      @Parameter(description = "Audit Revisions.") @RequestParam(required = false)
+          final List<Long> revisions,
+      @Parameter(description = "Audit Username. E.g. <b>SYSTEM</b>") @RequestParam(required = false)
+          final String actor,
+      @Parameter(description = "From Datetime, Inclusive. E.g. <b>2023-12-20T13:57:13+05:30</b>")
+          @RequestParam(required = false)
+          final OffsetDateTime fromDateTime,
+      @Parameter(description = "Till Datetime, Inclusive. E.g. <b>2023-12-22T13:57:13+05:30</b>")
+          @RequestParam(required = false)
+          final OffsetDateTime tillDateTime,
+      @ParameterObject @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageRequest) {
+    final Page<AuditEvent> feePage =
+        this.auditHistoryService.getAuditHistory(
+            collectionName, type, revisions, actor, fromDateTime, tillDateTime, pageRequest);
+    return PaginatedResourceAssembler.assemble(feePage);
+  }
 }
