@@ -9,7 +9,7 @@
 			"name": "application.mongodb.auditing.enabled",
 			"type": "java.lang.Boolean",
 			"defaultValue": "true",
-			"description": "Default: true, Whether or not to enable Problem Auditing."
+			"description": "Default: true, Whether or not to enable MongoDB Auditing."
 		},
 		{
 			"name": "application.mongodb.auditing.without-transaction",

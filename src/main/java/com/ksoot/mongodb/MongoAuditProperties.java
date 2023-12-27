@@ -39,7 +39,7 @@ public class MongoAuditProperties {
   class Auditing {
 
     /**
-     * Default: true, Whether or not to enable Auditing.
+     * Default: true, Whether or not to enable MongoDB Auditing.
      */
     private boolean enabled = false;
 

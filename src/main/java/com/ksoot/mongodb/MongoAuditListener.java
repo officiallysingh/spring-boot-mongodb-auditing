@@ -202,7 +202,8 @@ public class MongoAuditListener implements InitializingBean {
       this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexActor);
 
       Index indexUnqRevision =
-          new Index().named("idx_unq_revision").on("revision", Sort.Direction.ASC).unique();
+          new Index().named("idx_unq_revision").on("revision", Sort.Direction.ASC)
+                  .on("collectionName", Sort.Direction.ASC).unique();
       this.mongoOperations.indexOps(auditCollectionName).ensureIndex(indexUnqRevision);
     }
   }
