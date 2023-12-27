@@ -195,9 +195,9 @@ public class Product extends AbstractEntity {
   private String description;
 
   @TextIndexed(weight = 2)
-  private List<@NotEmpty @Size(min = 2, max = 10) String> tags;
+  private List<String> tags;
 
-  private Map<@NotEmpty @Size(min = 2, max = 50) String, @NotEmpty @Size(min = 2, max = 256) String>
+  private Map<String, String>
       attributes;
 
   @TextScore
