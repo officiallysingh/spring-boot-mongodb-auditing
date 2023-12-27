@@ -237,4 +237,4 @@ public Page<Product> findPage(final List<String> phrases, final Pageable pageReq
 curl -X 'GET' \
   'http://localhost:8080/v1/products?phrases=mobile&page=0&size=16' \
   -H 'accept: */*'
-``
+```
