@@ -26,6 +26,8 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
 * [**`MongoDBModule`**](src/main/java/com/ksoot/mongodb/MongoDBModule.java) registers custom serializer for MongoDB ObjectId, 
   otherwise the `id` attribute is not properly serialized.
 * [**`MongoAuditProperties`**](src/main/java/com/ksoot/mongodb/MongoAuditProperties.java) maps to configuration properties defined in `application.properties` or `application.yml`.
+* [**`AuditHistoryRepository`**](src/main/java/com/ksoot/product/adapter/repository/AuditHistoryRepository.java) provides implementation of repository method to fetch a Page of Audit history.
+* [**`AuditHistoryController`**](src/main/java/com/ksoot/product/adapter/controller/AuditHistoryController.java) provides implementation of API to get a Page of Audit history
 
 ## Configurations
 Following are the configuration properties to customize MongoDB Auditing behaviour.
