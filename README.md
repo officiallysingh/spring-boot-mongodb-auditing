@@ -169,3 +169,72 @@ curl -X 'GET' \
 ```
 
 # Spring Data MongoDB Text search
+
+## Introduction
+text search refers to the ability to perform [**Full-text searches**](https://docs.spring.io/spring-data/mongodb/docs/current-SNAPSHOT/reference/html/#mongodb.repositories.queries.full-text) on string content in your documents. 
+MongoDB provides a text search feature that allows to search for documents that contain a specified sequence of words or phrases.
+
+## Implementation
+
+### Entity
+The candidate fields for text search should be annotated with `@TextIndexed` as defined in 
+[**`Product`**](src/main/java/com/ksoot/product/domain/model/Product.java) entity class as follows.
+`@TextIndexed` marks a field to be part of the text index. `weight` attribute defines the significance of the filed relative to other indexed fields. 
+The value directly influences the documents score.
+As there can be only one text index per collection all fields marked with `@TextIndexed` are combined into one single index.
+A field marked with `@TextScore` is also required, to map the text score that MongoDB assigns to documents during a text search. 
+The text score represents the relevance of a document to a given text search query.
+```java
+@Document(collection = "products")
+public class Product extends AbstractEntity {
+
+  @TextIndexed(weight = 3)
+  private String name;
+
+  @TextIndexed(weight = 1)
+  private String description;
+
+  @TextIndexed(weight = 2)
+  private List<@NotEmpty @Size(min = 2, max = 10) String> tags;
+
+  private Map<@NotEmpty @Size(min = 2, max = 50) String, @NotEmpty @Size(min = 2, max = 256) String>
+      attributes;
+
+  @TextScore
+  @Getter(AccessLevel.PACKAGE)
+  @Setter(AccessLevel.PACKAGE)
+  private Float score;
+}
+```
+### Repository
+[**`ProductRepository`**](src/main/java/com/ksoot/product/adapter/repository/ProductRepository.java) provides implementation for Full-text search as follows.
+```java
+public Page<Product> findPage(final List<String> phrases, final Pageable pageRequest) {
+  Query query = new Query();
+  if (CollectionUtils.isNotEmpty(phrases)) {
+    TextCriteria criteria = TextCriteria.forDefaultLanguage();
+    criteria.matchingAny(phrases.toArray(new String[phrases.size()]));
+    query = TextQuery.queryText(criteria).sortByScore();
+  }
+
+  final long totalRecords = this.mongoOperations.count(query, Product.class);
+  if (totalRecords == 0) {
+    return Page.empty();
+  } else {
+    final Pageable pageable =
+        totalRecords <= pageRequest.getPageSize()
+            ? PageRequest.of(0, pageRequest.getPageSize(), pageRequest.getSort())
+            : pageRequest;
+    final List<Product> products = this.mongoOperations.find(query.with(pageable), Product.class);
+    return new PageImpl<>(products, pageable, totalRecords);
+  }
+}
+```
+
+### API
+* Access Demo Full-text search API at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Product to search for Products.
+```curl
+curl -X 'GET' \
+  'http://localhost:8080/v1/products?phrases=mobile&page=0&size=16' \
+  -H 'accept: */*'
+``
