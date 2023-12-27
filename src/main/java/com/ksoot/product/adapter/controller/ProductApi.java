@@ -86,7 +86,7 @@ public interface ProductApi extends Api {
           final ProductUpdationRQ request);
 
   @GetMapping
-  @Operation(operationId = "get-products-page", summary = "Gets a page of Products")
+  @Operation(operationId = "get-products-page", summary = "Gets a page of Products by Full-Text search based on provided phrases")
   @ApiResponses(
       value = {
         @ApiResponse(
