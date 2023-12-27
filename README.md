@@ -42,11 +42,11 @@ application:
       suffix: _aud
 ```
 
-* **`application.mongodb.entity-base-packages`** - List of packages to scan for MongoDB entities, Default: Main class package name.
-* **`application.mongodb.auditing.enabled`** - Whether or not to enable MongoDB Auditing, Default: true
-* **`application.mongodb.auditing.without-transaction`** - Whether or not to do Auditing without Transactions, Default: true,
-* **`application.mongodb.auditing.prefix`** - Audit collection name prefix, Default: "".
-* **`application.mongodb.auditing.suffix`** - Audit collection name suffix, Default: "". 
+* **`application.mongodb.entity-base-packages`** - List of packages to scan for MongoDB entities, Default: `Main class package name`.
+* **`application.mongodb.auditing.enabled`** - Whether or not to enable MongoDB Auditing, Default: `true`. If required Auditing can be disabled by setting it to `false`.
+* **`application.mongodb.auditing.without-transaction`** - Whether or not to do Auditing without Transactions, Default: `true`,
+* **`application.mongodb.auditing.prefix`** - Audit collection name prefix, Default: ``.
+* **`application.mongodb.auditing.suffix`** - Audit collection name suffix, Default: `_aud"`. 
 
 ## How it works
 * Only the entity classes annotated with `Auditable` will be audited. 
@@ -79,13 +79,12 @@ Clone this repository, import in your favourite IDE as either Maven or Gradle pr
 ### Docker compose
 
 Application is bundled with [**`Spring boot Docker compose`**](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.docker-compose).
-If you have docker installed, then simply run the application in `docker` profile by passing `spring.profiles.active=docker`
+* If you have docker installed, then simply run the application in `docker` profile by passing `spring.profiles.active=docker`
 as program argument from your IDE.
-Depending on your current working directory in IDE, you may need to change `spring.docker.compose.file=spring-boot-mongodb-auditing/compose.yml`
+* Depending on your current working directory in IDE, you may need to change `spring.docker.compose.file=spring-boot-mongodb-auditing/compose.yml`
 to `spring.docker.compose.file=compose.yml` in [**`application-docker.yml`**](src/main/resources/config/application-docker.yml)
-
-Make sure the host ports mapped in [**`Docker compose file`**](compose.yml) are available or change the ports and
-do the respective changes in database configurations [**`application-docker.properties`**](src/main/resources/config/application-docker.yml)
+* Make sure the host ports mapped in [**`Docker compose file`**](compose.yml) are available or change the ports and
+do the respective changes in database configurations [**`application-docker.yml`**](src/main/resources/config/application-docker.yml)
 
 ### Explicit MongoDB installation
 If you have MongoDB installed locally or Using MongoDB Atlas, 
@@ -95,7 +94,7 @@ spring:
   #------------------------- MongoDB configuration -------------------------
   data:
     mongodb:
-      uri: ${MONGODB_URL:mongodb://localhost:27017}
+      uri: <You MongoDB URI>
 ```
 
 > [!IMPORTANT]

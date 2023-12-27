@@ -25,7 +25,7 @@
 		{
 			"name": "application.mongodb.auditing.suffix",
 			"type": "java.lang.String",
-			"description": "Default: \"\", Audit collection name suffix."
+			"description": "Default: \"_aud\", Audit collection name suffix."
 		}
 	]
 }
