@@ -107,7 +107,7 @@ Refer to [**`MongoDB Replica Set`**](https://medium.com/workleap/the-only-local-
 * Access [`Swagger`](http://localhost:8080/swagger-ui.html) at http://localhost:8080/swagger-ui.html
 * Access Demo CRUD APIs at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Product 
   * Create a new Product
-```json
+```curl
 curl -X 'POST' \
   'http://localhost:8080/v1/products' \
   -H 'accept: application/json' \
@@ -125,7 +125,7 @@ curl -X 'POST' \
 }'
 ```
   * Update existing Product, replace `60f0b0b0e3b9a91e8c7b0b0b` with your Product id
-```json
+```curl
 curl -X 'PATCH' \
 'http://localhost:8080/v1/products/60f0b0b0e3b9a91e8c7b0b0b' \
   -H 'accept: application/json' \
@@ -135,14 +135,14 @@ curl -X 'PATCH' \
 }'
 ```
   * Delete existing Product, replace `60f0b0b0e3b9a91e8c7b0b0b` with your Product id
-```json
+```curl
 curl -X 'DELETE' \
   'http://localhost:8080/v1/products/60f0b0b0e3b9a91e8c7b0b0b' \
   -H 'accept: application/json'
 ```
 * Access Audit History APIs at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Audit to fetch Audit history of any Product.
 Records can be filtered by Collection Name, Audit event type, Revision, Audit Username, Revisions and Datetime range.
-```json
+```curl
 curl -X 'GET' \
   'http://localhost:8080/v1/audit-history?collectionName=products&page=0&size=16' \
   -H 'accept: */*'
