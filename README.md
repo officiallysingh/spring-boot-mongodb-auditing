@@ -57,7 +57,7 @@ prefixed and suffixed with values defined in `application.mongodb.auditing.prefi
 * For each such entity class it creates Audit collection with name as per settings and prepares Audit metadata.
 * It listens to all changes to eligible entity classes and creates Audit records, whenever new records are created, existing records are updated or deleted.
 * For newly created records `type` attribute of Audit record will be `CREATED`, for updated records `type` attribute will be `UPDATED` and for deleted records `type` attribute will be `DELETED`.
-* `source` attribute of Audit record will contain the snapshot of the record before update. While deleting the record, the `source` will only contain `_id` of deleted record.
+* `source` attribute of Audit record will contain the snapshot of the record after update. While deleting the record, the `source` will only contain `_id` of deleted record.
 * It is recommended to use a version field annotated with `@Version` in entity classes to avoid concurrent updates. 
 It expects a `Long` version field to differentiates between newly created records and already existing updated record. 
 In absence of version field `type` attribute of Audit record will be `UPDATED` for newly created and updated records as well.
