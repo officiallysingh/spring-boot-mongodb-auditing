@@ -47,8 +47,8 @@ application:
 * **`application.mongodb.entity-base-packages`** - List of packages to scan for MongoDB entities, Default: `Main class package name`.
 * **`application.mongodb.auditing.enabled`** - Whether or not to enable MongoDB Auditing, Default: `true`. If required Auditing can be disabled by setting it to `false`.
 * **`application.mongodb.auditing.without-transaction`** - Whether or not to do Auditing without Transactions, Default: `true`,
-* **`application.mongodb.auditing.prefix`** - Audit collection name prefix, Default: ``.
-* **`application.mongodb.auditing.suffix`** - Audit collection name suffix, Default: `_aud"`. 
+* **`application.mongodb.auditing.prefix`** - Audit collection name prefix, Default: ` `.
+* **`application.mongodb.auditing.suffix`** - Audit collection name suffix, Default: `_aud`. 
 
 ## How it works
 * Only the entity classes annotated with `Auditable` will be audited. 
