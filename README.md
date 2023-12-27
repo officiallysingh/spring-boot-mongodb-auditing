@@ -4,7 +4,7 @@
 [**`Hibernate Envers`**](https://hibernate.org/orm/envers) provides Auditing of JPA entities,
 but no such library provides out of box support for Auditing MongoDB entities.
 Auditing is a cross-cutting concern, should be kept separate from business logic and available to be applied
-declaratively.
+declaratively. This project provides a simple solution to Audit MongoDB entities.
 
 ## Implementation
 All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package.
