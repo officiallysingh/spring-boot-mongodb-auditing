@@ -47,7 +47,7 @@ public class MongoAuditListener implements InitializingBean {
                             "onAfterSave: %s, %s",
                             event.getSource(), serializeToJsonSafely(event.getDocument())));
         }
-        final AuditEvent auditEvent = this.createAuditEntryOnAfterSave(event, 0);
+        this.createAuditEntryOnAfterSave(event, 0);
     }
 
     private AuditEvent createAuditEntryOnAfterSave(
@@ -56,7 +56,8 @@ public class MongoAuditListener implements InitializingBean {
             String auditCollectionName = this.auditMetaData.getAuditCollection(event.getCollectionName()).get();
             try {
                 long revision = this.mongoOperations.count(EMPTY_QUERY, auditCollectionName) + 1;
-                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, this.getAuditUserName());
+                final AuditEvent auditEvent = AuditEvent.ofSaveEvent(event, revision, this.getAuditUserName(),
+                        this.auditMetaData.getVersionProperty(event.getCollectionName()));
                 return this.mongoOperations.insert(auditEvent, auditCollectionName);
             } catch (final DuplicateKeyException exception) {
                 if (attempt > 2) { // Max three attempts
@@ -84,7 +85,7 @@ public class MongoAuditListener implements InitializingBean {
                             "onAfterDelete: %s, %s",
                             event.getSource(), serializeToJsonSafely(event.getDocument())));
         }
-        final AuditEvent auditEvent = this.createAuditEntryOnAfterDelete(event, 0);
+        this.createAuditEntryOnAfterDelete(event, 0);
     }
 
     private AuditEvent createAuditEntryOnAfterDelete(
@@ -137,6 +138,9 @@ public class MongoAuditListener implements InitializingBean {
                         entity ->
                                 this.getAuditableAnnotation((BasicMongoPersistentEntity) entity).ifPresent(auditable -> {
                                     String collectionName = ((BasicMongoPersistentEntity) entity).getCollection();
+                                    String versionProperty = ((BasicMongoPersistentEntity) entity).hasVersionProperty()
+                                            ? ((BasicMongoPersistentEntity) entity).getVersionProperty().getName() : null;
+
                                     String auditCollectionName;
                                     if (StringUtils.isNotBlank(auditable.name())) {
                                         auditCollectionName = auditable.name();
@@ -147,7 +151,8 @@ public class MongoAuditListener implements InitializingBean {
                                                         + this.mongoAuditProperties.getAuditing().getSuffix();
                                     }
                                     this.createAuditCollectionIfDoesNotExist(auditCollectionName);
-                                    this.auditMetaData.put(collectionName, auditCollectionName);
+
+                                    this.auditMetaData.put(collectionName, AuditMetaData.Metadata.of(auditCollectionName, versionProperty));
                                 })
                 );
     }

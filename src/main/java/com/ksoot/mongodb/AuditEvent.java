@@ -8,6 +8,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,9 +74,15 @@ public class AuditEvent {
   }
 
   public static AuditEvent ofSaveEvent(
-      final AfterSaveEvent<?> event, final Long revision, final String auditUserName) {
+      final AfterSaveEvent<?> event,
+      final Long revision,
+      final String auditUserName,
+      final Optional<String> versionProperty) {
+    Long version =
+        versionProperty.isPresent() ? event.getDocument().getLong(versionProperty.get()) : null;
+    Type type = version == null ? null : version == 0 ? Type.CREATED : Type.UPDATED;
     return of(
-        revision == 1 ? Type.CREATED : Type.UPDATED,
+        type,
         event.getTimestamp(),
         revision,
         event.getCollectionName(),

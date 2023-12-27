@@ -70,7 +70,7 @@ class MongoDBConfig extends AbstractMongoClientConfiguration {
   private String getDefaultPackageName() {
     String mainClassName = System.getProperty("sun.java.command");
     String defaultPackageName = mainClassName.substring(0, mainClassName.lastIndexOf('.'));
-    return defaultPackageName;
+    return defaultPackageName; // Main class package name
   }
 
   @Bean
