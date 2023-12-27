@@ -3,8 +3,8 @@
 ## Introduction
 [**`Hibernate Envers`**](https://hibernate.org/orm/envers) provides Auditing of JPA entities,
 but no such library provides out of box support for Auditing MongoDB entities.
-Auditing is a cross-cutting concern, should be kept separate from business logic and available to be applied
-declaratively. This project provides a simple solution to Audit MongoDB entities.
+Auditing is a cross-cutting concern, should be kept separate from business logic and available to be applied declaratively. 
+This project provides a simple solution to Audit MongoDB entities.
 
 ## Implementation
 All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package.
@@ -31,6 +31,7 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
 
 ## Configurations
 Following are the configuration properties to customize MongoDB Auditing behaviour.
+
 ```yaml
 application:
   mongodb:
@@ -89,16 +90,13 @@ Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**
 ![Audit Date](https://github.com/officiallysingh/spring-boot-mongodb-auditing/blob/main/Audit%20data.png)
 
 ## Usage
-
 You can copy the classes from [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package to your project and use them as it is 
 or do any changes as per your requirements.
 
 ## Demo
-
 Clone this repository, import in your favourite IDE as either Maven or Gradle project. 
 
 ### Docker compose
-
 Application is bundled with [**`Spring boot Docker compose`**](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.docker-compose).
 * If you have docker installed, then simply run the application in `docker` profile by passing `spring.profiles.active=docker`
 as program argument from your IDE.
@@ -108,20 +106,17 @@ to `spring.docker.compose.file=compose.yml` in [**`application-docker.yml`**](sr
 do the respective changes in database configurations [**`application-docker.yml`**](src/main/resources/config/application-docker.yml)
 
 ### Explicit MongoDB installation
-If you have MongoDB installed locally or Using MongoDB Atlas, 
-then change to your MongoDB URI in [**`application.yml`**](src/main/resources/config/application.yml) file as follows.
+Change to your MongoDB URI in [**`application.yml`**](src/main/resources/config/application.yml) file as follows.
 ```yaml
 spring:
-  #------------------------- MongoDB configuration -------------------------
   data:
     mongodb:
-      uri: <You MongoDB URI>
+      uri: <Your MongoDB URI>
 ```
 
 > [!IMPORTANT]
 MongoDB replica set is required for Transactions to work. 
 Refer to [**`MongoDB Replica Set`**](https://medium.com/workleap/the-only-local-mongodb-replica-set-with-docker-compose-guide-youll-ever-need-2f0b74dd8384) for more details.
-
 
 ### APIs
 * Access [`Swagger`](http://localhost:8080/swagger-ui.html) at http://localhost:8080/swagger-ui.html
@@ -144,6 +139,7 @@ curl -X 'POST' \
   }
 }'
 ```
+
   * Update existing Product, replace `60f0b0b0e3b9a91e8c7b0b0b` with your Product id
 ```curl
 curl -X 'PATCH' \
@@ -154,12 +150,14 @@ curl -X 'PATCH' \
   "description": "iPhone Handset"
 }'
 ```
+
   * Delete existing Product, replace `60f0b0b0e3b9a91e8c7b0b0b` with your Product id
 ```curl
 curl -X 'DELETE' \
   'http://localhost:8080/v1/products/60f0b0b0e3b9a91e8c7b0b0b' \
   -H 'accept: application/json'
 ```
+
 * Access Audit History APIs at http://localhost:8080/swagger-ui/index.html?urls.primaryName=Audit to fetch Audit history of any Product.
 Records can be filtered by Collection Name, Audit event type, Revision, Audit Username, Revisions and Datetime range.
 ```curl
@@ -208,6 +206,7 @@ public class Product extends AbstractEntity {
 ```
 ### Repository
 [**`ProductRepository`**](src/main/java/com/ksoot/product/adapter/repository/ProductRepository.java) provides implementation for Full-text search as follows.
+
 ```java
 public Page<Product> findPage(final List<String> phrases, final Pageable pageRequest) {
   Query query = new Query();
@@ -238,3 +237,9 @@ curl -X 'GET' \
   'http://localhost:8080/v1/products?phrases=mobile&page=0&size=16' \
   -H 'accept: */*'
 ```
+
+## Author
+[**Rajveer Singh**](https://www.linkedin.com/in/rajveer-singh-589b3950/), In case you find any issues or need any support, please email me at raj14.1984@gmail.com
+
+## References
+For exception handling refer to [**pring-boot-problem-handler**](https://github.com/officiallysingh/spring-boot-problem-handler)
