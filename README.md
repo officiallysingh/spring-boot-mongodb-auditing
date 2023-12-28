@@ -86,7 +86,7 @@ public void onAfterDelete(final AfterDeleteEvent<?> event) {
 But If required `application.mongodb.auditing.without-transaction` can be set to `true` then Auditing will be done without Transactions.
 * Spring uses `ApplicationEventMulticaster` internally to publish Entity change events. With Transactions,
   **make sure `ApplicationEventMulticaster` is not configured to use `AsyncTaskExecutor`** to publish events asynchronously,
-  because the Transaction would not be propagated to Entity change listeners and Auditing would fail.
+  because the Transaction would not be propagated to Entity change listeners and Auditing would fail in this case.
 * It is recommended to use `OffsetDateTime` or `ZonedDateTime` for `datetime` attribute of Audit record to avoid any timezone related issues. 
 Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java).
 * **Audit history is logged as follows.**
