@@ -92,7 +92,6 @@ Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**
 * **Audit history is logged as follows.**
 ![Audit Date](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Za4HF7HRYvYLrHLxiE6g0Q.png)
 
-```java
 ## Usage
 You can copy the classes from [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package to your project and use them as it is 
 or do any changes as per your requirements.
