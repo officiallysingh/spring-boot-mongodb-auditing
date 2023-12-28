@@ -5,6 +5,7 @@
 but no such library provides out of box support for Auditing MongoDB entities.
 Auditing is a cross-cutting concern, should be kept separate from business logic and available to be applied declaratively. 
 This project provides a simple solution to Audit MongoDB entities.
+Requires Java 21, Spring boot 3.2.0+ and MongoDB 4.2+.
 
 ## Implementation
 All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package.
@@ -94,7 +95,22 @@ Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**
 
 ## Usage
 You can copy the classes from [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package to your project and use them as it is 
-or do any changes as per your requirements.
+or do any changes as per your requirements.Though application is built using Requires Java 21, Spring boot 3.2.0, 
+but you can update Java version to Java 17 also as follows.
+
+Maven [**`pom.xml`**](pom.xml)
+```xml
+<properties>
+    <java.version>17</java.version>
+</properties>
+```
+Gradle [**`build.gradle`**](build.gradle)
+```groovy
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+```
 
 ## Demo
 Clone this repository, import in your favourite IDE as either Maven or Gradle project. 
