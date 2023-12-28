@@ -114,7 +114,6 @@ java {
 }
 ```
 
-
 ### Docker compose
 Application is bundled with [**`Spring boot Docker compose`**](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.docker-compose).
 * If you have docker installed, then simply run the application in `docker` profile by passing `spring.profiles.active=docker`
