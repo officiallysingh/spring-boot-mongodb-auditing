@@ -125,8 +125,8 @@ public class MongoAuditListener implements InitializingBean {
   }
 
   private boolean validateTransaction() {
-    return TransactionSynchronizationManager.isActualTransactionActive()
-        || this.mongoAuditProperties.getAuditing().isWithoutTransaction();
+    return this.mongoAuditProperties.getAuditing().isWithoutTransaction()
+        || TransactionSynchronizationManager.isActualTransactionActive();
   }
 
   private String getAuditUserName() {

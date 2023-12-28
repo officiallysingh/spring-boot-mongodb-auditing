@@ -84,11 +84,15 @@ public void onAfterDelete(final AfterDeleteEvent<?> event) {
 * It is highly recommended to put the CRUD operation in a **Transaction** using Spring's `@Transactional` 
 (Refer to [**`Service`**](src/main/java/com/ksoot/product/domain/service/ProductServiceImpl.java)) to update source collection and create audit entry atomically.
 But If required `application.mongodb.auditing.without-transaction` can be set to `true` then Auditing will be done without Transactions.
+* Spring uses `ApplicationEventMulticaster` internally to publish Entity change events. With Transactions,
+  **make sure `ApplicationEventMulticaster` is not configured to use `AsyncTaskExecutor`** to publish events asynchronously,
+  because the Transaction would not be propagated to Entity change listeners and Auditing would fail.
 * It is recommended to use `OffsetDateTime` or `ZonedDateTime` for `datetime` attribute of Audit record to avoid any timezone related issues. 
 Custom converters and Codecs are configured for the same in [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java).
 * **Audit history is logged as follows.**
 ![Audit Date](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Za4HF7HRYvYLrHLxiE6g0Q.png)
 
+```java
 ## Usage
 You can copy the classes from [**`com.ksoot.mongodb`**](src/main/java/com/ksoot/mongodb) package to your project and use them as it is 
 or do any changes as per your requirements.
