@@ -99,8 +99,7 @@ or do any changes as per your requirements.
 
 ## Demo
 Clone this repository, import in your favourite IDE as either Maven or Gradle project. 
-Though the application is built using Requires Java 21, Spring boot 3.2.0,
-but you can update Java version to Java 17 also as follows.
+Though the application is built using Java 21, but you can update Java version to Java 17 also as follows.
 
 Maven [**`pom.xml`**](pom.xml)
 ```xml
