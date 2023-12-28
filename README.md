@@ -17,13 +17,13 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
   Then it listens to eligible Entity object changes and creates Audit records.
 * [**`MongoDBConfig`**](src/main/java/com/ksoot/mongodb/MongoDBConfig.java) is custom configuration class for MongoDB.
 * [**`AuditEvent`**](src/main/java/com/ksoot/mongodb/AuditEvent.java) is class to persist and retrieve Audit records. It defines following fields
-  * **`id`** - Unique identifier for Audit record.
-  * **`datetime`** - `OffsetDateTime` when the change happened.
-  * **`actor`** - Audit Username if available in `SecurityContextHolder`, otherwise it will be set as `SYSTEM`.
-  * **`revision`** - Autoincrement numeric value for each change to a particular record.
-  * **`type`** - Type of change to a record such as `CREATED`, `UPDATED`, `DELETED`.
-  * **`collectionName`** - Source MongoDB collection name.
-  * **`source`** - Snapshot of Audited record.
+  * **`id`** : Unique identifier for Audit record.
+  * **`datetime`** : `OffsetDateTime` when the change happened.
+  * **`actor`** : Audit Username if available in `SecurityContextHolder`, otherwise it will be set as `SYSTEM`.
+  * **`revision`** : Autoincrement numeric value for each change to a particular record.
+  * **`type`** : Type of change to a record such as `CREATED`, `UPDATED`, `DELETED`.
+  * **`collectionName`** : Source MongoDB collection name.
+  * **`source`** : Snapshot of Audited record.
 * [**`MongoDBModule`**](src/main/java/com/ksoot/mongodb/MongoDBModule.java) registers custom serializer for MongoDB ObjectId, 
   otherwise the `id` attribute is not properly serialized.
 * [**`MongoAuditProperties`**](src/main/java/com/ksoot/mongodb/MongoAuditProperties.java) maps to configuration properties defined in `application.properties` or `application.yml`.
