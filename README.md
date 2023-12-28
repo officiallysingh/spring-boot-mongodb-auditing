@@ -32,7 +32,6 @@ All code responsible for auditing is in [**`com.ksoot.mongodb`**](src/main/java/
 
 ## Configurations
 Following are the configuration properties to customize MongoDB Auditing behaviour.
-
 ```yaml
 application:
   mongodb:
