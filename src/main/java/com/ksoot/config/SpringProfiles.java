@@ -8,6 +8,8 @@ public class SpringProfiles {
 
   public static final String LOCAL = "local";
 
+  public static final String DOCKER = "docker";
+
   public static final String DEVELOPMENT = "dev";
 
   public static final String STAGE = "stage";
@@ -75,6 +77,6 @@ public class SpringProfiles {
   }
 
   public static Set<String> exclusiveProfiles() {
-    return Set.of(FALLBACK_DEFAULT_PROFILE, LOCAL, DEVELOPMENT, STAGE, PRODUCTION);
+    return Set.of(FALLBACK_DEFAULT_PROFILE, LOCAL, DOCKER, DEVELOPMENT, STAGE, PRODUCTION);
   }
 }
